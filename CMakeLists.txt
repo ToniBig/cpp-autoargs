@@ -1,0 +1,20 @@
+CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
+
+PROJECT ( AutoArgs )
+
+# The library
+
+FILE ( GLOB SOURCES "src/*.cpp" )
+ADD_LIBRARY ( ${PROJECT_NAME} ${SOURCES} )
+
+# Testing
+
+FIND_PACKAGE( Boost COMPONENTS unit_test_framework REQUIRED )
+
+INCLUDE_DIRECTORIES( SYSTEM ${Boost_INCLUDE_DIRS} )
+
+FILE ( GLOB TESTSOURCES "test/*.cpp" )
+
+ADD_EXECUTABLE ( ${PROJECT_NAME}_testrunner main_test.cpp ${TESTSOURCES} )
+
+TARGET_LINK_LIBRARIES ( ${PROJECT_NAME}_testrunner ${PROJECT_NAME} ${Boost_LIBRARIES} )
