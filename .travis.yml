@@ -15,7 +15,7 @@ before_script:
   - cd build
   - cmake ..
 
-script: make && make run_autoargs_test
+script: make && make run_autoargs_tests
 
 notifications:
   email:

@@ -22,13 +22,13 @@ PROJECT ( autoargs )
 #------------------------------------------------------------------------------
 OPTION ( AUTOARGS_ENABLE_TESTING "Enable tests for AutoArgs library" ON )
 OPTION ( AUTOARGS_SHARED_LIBRARY "Build AutoArgs as shared library" ON )
-OPTION ( AUTOARGS_ADD_CXX11_FLAG "Add -std=c++11 to CMAKE_CXX_FLAGS" OFF )
+OPTION ( AUTOARGS_ADD_CXX11_FLAG "Add -std=c++11 to CMAKE_CXX_FLAGS" ON )
 
-IF( NOT ${AUTOARGS_ADD_CXX11_FLAG} )
+IF( ${AUTOARGS_ADD_CXX11_FLAG} )
   
   	SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11" )
 
-ENDIF( NOT ${AUTOARGS_ADD_CXX11_FLAG} )
+ENDIF( ${AUTOARGS_ADD_CXX11_FLAG} )
 
 #------------------------------------------------------------------------------
 # DEFINE SOURCE FILES
