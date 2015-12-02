@@ -1,4 +1,4 @@
-AutoArgs https://travis-ci.org/ToniBig/AutoArgs.svg?branch=master
+AutoArgs 
 ========
 
-A simple command line argument parser for programs written in C++
+A simple command line argument parser for programs written in C++. https://travis-ci.org/ToniBig/AutoArgs.svg?branch=master
