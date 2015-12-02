@@ -1,0 +1,27 @@
+language: cpp
+compiler:
+  - gcc
+
+install:
+- if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - gcc-4.8
+    - g++-4.8
+    - clang
+before_script:
+  - sudo apt-get update -qq
+  - sudo apt-get install libboost-test-dev
+  - mkdir build
+  - cd build
+  - cmake ..
+script: make && make run_autoargs_test
+notifications:
+  email:
+    recipients:
+      - tino.bog@gmail.com
+    on_success: change
+    on_failure: always
