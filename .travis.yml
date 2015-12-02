@@ -1,0 +1,17 @@
+language: cpp
+compiler:
+  - gcc
+  - clang
+before_script:
+  - sudo apt-get update -qq
+  - sudo apt-get install libboost-test-dev
+  - mkdir build
+  - cd build
+  - cmake ..
+script: make && make run_autoargs_test
+notifications:
+  email:
+    recipients:
+      - tino.bog@gmail.com
+    on_success: change
+    on_failure: always
