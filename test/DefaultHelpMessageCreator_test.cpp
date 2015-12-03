@@ -22,17 +22,15 @@
 // --- Internal Includes ---
 #include "../inc/DefaultHelpMessageCreator.hpp"
 
-// --- BOOST Includes ---
-#include "boost/test/unit_test.hpp"
+// --- Catch Includes ---
+#include "catch.hpp"
 
 namespace adhocpp
 {
 namespace utilities
 {
 
-BOOST_AUTO_TEST_SUITE ( DefaultHelpMessageCreatorTest )
-
-BOOST_AUTO_TEST_CASE ( getHelpDescription )
+TEST_CASE ( "get help description" )
 {
 
   DriverData data;
@@ -79,12 +77,10 @@ BOOST_AUTO_TEST_CASE ( getHelpDescription )
       "\t--help                    : print this help message\n"
       "\t--version                 : print the version of AdhoC++ being used\n";
 
-  BOOST_CHECK_NO_THROW( description = DefaultHelpMessageCreator::getHelpMessage( data ) );
+  CHECK_NOTHROW( description = DefaultHelpMessageCreator::getHelpMessage( data ) );
 
-  BOOST_CHECK_EQUAL( description, reference );
+  CHECK( description == reference );
 }
 
-BOOST_AUTO_TEST_SUITE_END() // DefaultHelpMessageCreatorTest
-
-}// namespace utilities
-}// namespace adhocpp
+} // namespace utilities
+} // namespace adhocpp

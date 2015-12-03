@@ -19,10 +19,5 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-// --- Boost Includes ---
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE autoargs
-#define BOOST_TEST_DETECT_MEMORY_LEAK 1
-
-// --- Unit Test Includes ---
-#include <boost/test/unit_test.hpp>
+#define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
+#include "catch.hpp"
