@@ -19,8 +19,8 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#ifndef UTILITIES_AUTOARGS_HPP_
-#define UTILITIES_AUTOARGS_HPP_
+#ifndef AUTOARGS_AUTOARGS_HPP_
+#define AUTOARGS_AUTOARGS_HPP_
 
 // --- Internal Includes ---
 #include "BooleanArgument.hpp"
@@ -47,4 +47,4 @@ typedef adhocpp::utilities::GenericArgumentParser<adhocpp::utilities::DefaultHel
     adhocpp::utilities::AdhocppExceptionPolicy, adhocpp::utilities::DefaultInputFileReader> TestArgumentParser;
 }  // namespace autoargs
 
-#endif // UTILITIES_AUTOARGS_HPP_
+#endif // AUTOARGS_AUTOARGS_HPP_

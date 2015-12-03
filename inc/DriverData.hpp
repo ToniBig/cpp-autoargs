@@ -19,8 +19,8 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#ifndef UTILITIES_DRIVERDATA_HPP_
-#define UTILITIES_DRIVERDATA_HPP_
+#ifndef AUTOARGS_DRIVERDATA_HPP_
+#define AUTOARGS_DRIVERDATA_HPP_
 
 // --- Standard Includes ---
 #include <string>
@@ -77,4 +77,4 @@ inline ArgumentData makeArgument( const std::string& placeholder,
 
 } // namespace utilities
 } // namespace adhocpp
-#endif // UTILITIES_DRIVERDATA_HPP_
+#endif // AUTOARGS_DRIVERDATA_HPP_
