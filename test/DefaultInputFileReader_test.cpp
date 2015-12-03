@@ -22,43 +22,34 @@
 // --- Internal Includes ---
 #include "../inc/DefaultInputFileReader.hpp"
 
-// --- BOOST Includes ---
-#include "boost/test/unit_test.hpp"
+// --- Catch Includes ---
+#include "catch.hpp"
 
-namespace adhocpp {
-namespace utilities {
-
-BOOST_AUTO_TEST_SUITE ( DefaultInputFileReader_test )
-
-struct Fixture
+namespace adhocpp
 {
-  std::string fileName;
+namespace utilities
+{
+
+TEST_CASE( "parse input file" )
+{
   PlaceHolderValueMap result;
+  std::string fileName = "defaultInputFileReaderData.in";
 
-  Fixture( )
-  {
-    fileName = "defaultInputFileReaderData.in";
-  }
-};
+  SECTION( "parse input file" ){
 
-BOOST_FIXTURE_TEST_SUITE ( parseInputFile, Fixture )
+  REQUIRE_NOTHROW( result = DefaultInputFileReader::parseInputFile( fileName ) );
 
-BOOST_AUTO_TEST_CASE ( parseInputFile )
-{
-  BOOST_CHECK_NO_THROW( result = DefaultInputFileReader::parseInputFile( fileName ) );
-
-  BOOST_CHECK_EQUAL( result.size( ), 6 );
-  BOOST_CHECK_EQUAL( result["doubleArgument"], "1.23" );
-  BOOST_CHECK_EQUAL( result["intArgument"], "23" );
-  BOOST_CHECK_EQUAL( result["stringArgument"], "Hallo_Welt" );
-  BOOST_CHECK_EQUAL( result["sizeArgument"], "34" );
-  BOOST_CHECK_EQUAL( result["bool1"], "0" );
-  BOOST_CHECK_EQUAL( result["bool2"], "true" );
+  CHECK( result.size( ) == 6 );
+  CHECK( result["doubleArgument"] == "1.23" );
+  CHECK( result["intArgument"] == "23" );
+  CHECK( result["stringArgument"] == "Hallo_Welt" );
+  CHECK( result["sizeArgument"] == "34" );
+  CHECK( result["bool1"] == "0" );
+  CHECK( result["bool2"] == "true" );
 }
 
-BOOST_AUTO_TEST_SUITE_END() /* end of parseInputFile Test Suite */
+}
 
-BOOST_AUTO_TEST_SUITE_END() // DefaultInputFileReader_test 
-
-}// namespace utilities 
+}
+ // namespace utilities
 }// namespace adhocpp

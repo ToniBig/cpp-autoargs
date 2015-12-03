@@ -23,31 +23,25 @@
 #include "../inc/StringArgument.hpp"
 #include "../inc/ArgumentManager.hpp"
 
-// --- BOOST Includes ---
-#include "boost/test/unit_test.hpp"
+// --- Catch Includes ---
+#include "catch.hpp"
 
 namespace adhocpp
 {
 namespace utilities
 {
 
-BOOST_AUTO_TEST_SUITE ( StringArgumentTest )
-
-BOOST_AUTO_TEST_SUITE ( Constructor )
-
-BOOST_AUTO_TEST_CASE ( DefaultConstructorWithOutExplicitDefault )
+TEST_CASE ( "String Argument: Default constructor with out explicit default" )
 {
   ArgumentManager::getInstance( ).clear( );
-  BOOST_CHECK_NO_THROW( StringArgument( "stringOption", "Yes or no?" ) );
+  CHECK_NOTHROW( StringArgument( "stringOption", "Yes or no?" ) );
 }
 
-BOOST_AUTO_TEST_CASE ( DefaultConstructorWithExplicitDefault )
+TEST_CASE ( "Default constructor with explicit default" )
 {
   ArgumentManager::getInstance( ).clear( );
-  BOOST_CHECK_NO_THROW( StringArgument( "stringOption", "Yes or no?", "Hello World" ) );
+  CHECK_NOTHROW( StringArgument( "stringOption", "Yes or no?", "Hello World" ) );
 }
-
-BOOST_AUTO_TEST_SUITE_END() // Constructor
 
 struct Fixture
 {
@@ -59,27 +53,25 @@ struct Fixture
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE( someFunction, Fixture )
-
-BOOST_AUTO_TEST_CASE ( conversionUsingDefault )
+TEST_CASE_METHOD( Fixture, "String Argument" )
 {
+
+  SECTION( "conversionUsingDefault" ){
   StringArgument argument( "stringOption", "Yes or no?" );
 
-  BOOST_CHECK_THROW( result = argument, std::runtime_error );
+  CHECK_THROWS_AS( result = argument, std::runtime_error );
 }
 
-BOOST_AUTO_TEST_CASE ( conversionUsingNonDefault )
+SECTION( "conversionUsingNonDefault" )
 {
   StringArgument argument( "stringOption", "Yes or no?", "No" );
 
-  BOOST_CHECK_NO_THROW( result = argument );
+  CHECK_NOTHROW( result = argument );
 
-  BOOST_CHECK_EQUAL( result, "No" );
+  CHECK( result == "No" );
 }
 
-BOOST_AUTO_TEST_SUITE_END() // someFunction
+}
 
-BOOST_AUTO_TEST_SUITE_END() // StringArgumentTest
-
-}// namespace utilities
-}// namespace adhocpp
+} // namespace utilities
+} // namespace adhocpp
