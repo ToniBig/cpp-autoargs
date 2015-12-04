@@ -31,16 +31,10 @@ namespace utilities
 {
 
 StringArgument::StringArgument( const std::string& placeHolder,
-                                const std::string& helpText ) :
-        AbsArgument( placeHolder, helpText, false )
-{
-}
-
-StringArgument::StringArgument( const std::string& placeHolder,
                                 const std::string& helpText,
                                 const std::string& defaultValue ) :
-        AbsArgument( placeHolder, helpText, true ),
-        myDefaultValue( defaultValue )
+        AbsArgument( placeHolder, helpText ),
+        myValue( defaultValue )
 {
 }
 
@@ -50,36 +44,32 @@ StringArgument::~StringArgument( )
 
 std::string StringArgument::getType( ) const
 {
-    return "string";
+  return "string";
 }
 
-std::string StringArgument::getDefaultValue( ) const
+std::string StringArgument::getValue( ) const
 {
-    return myDefaultValue;
+  return myValue;
 }
 
 void StringArgument::setValue( std::string value )
 {
-    myDefaultValue = value;
-
-    myDefaultValueState = true;
+  myValue = value;
 }
 
 StringArgument::operator std::string( ) const
 {
-    return this->value( );
+  return this->value( );
 }
 
 std::string StringArgument::value( ) const
 {
-    if ( hasDefaultValue( ) )
-    {
-      return myDefaultValue;
-    }
-    else
-    {
-      throw std::runtime_error( "No default value specified for: " + this->getPlaceHolder( ) );
-    }
+  return myValue;
+}
+
+std::string StringArgument::operator *( ) const
+{
+  return myValue;
 }
 
 } // namespace utilities

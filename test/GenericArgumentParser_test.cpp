@@ -49,45 +49,38 @@ TEST_CASE_METHOD( Fixture, "Parse command line" )
   ArgumentManager::getInstance( ).clear( );
 
   DoubleArg optionalArg1( "optional1", "First optional", 1.23 );
-  DoubleArg requiredArg1( "required1", "First required" );
   SizeArg optionalArg2( "optional2", "Second optional", 23 );
-  BoolArg optionalArg3( "optional3", "Third optional" );
-  StringArg optionalArg4( "optional4", "Fourth optional", "3.45" );
+  StringArg optionalArg3( "optional3", "Fourth optional", "3.45" );
 
-  int argc = 4 + 1;
+  int argc = 3 + 1;
   char arg0[] = "driver";
-  char arg1[] = "4.32";
-  char arg2[] = "--optional1=6.54";
-  char arg3[] = "--optional2=12";
-  char arg4[] = "--optional4=hello";
+  char arg1[] = "--optional1=6.54";
+  char arg2[] = "--optional2=12";
+  char arg3[] = "--optional3=hello";
   char* argv[] =
-  { &arg0[0], &arg1[0], &arg2[0], &arg3[0], &arg4[0], NULL};
+  { &arg0[0], &arg1[0], &arg2[0], &arg3[0], NULL};
 
   CHECK_NOTHROW( TestArgumentParser::parseCommandLine( argc, argv ) );
 
-  double result1 = requiredArg1;
-  double result2 = optionalArg1;
-  double result3 = optionalArg2;
-  bool result4 = optionalArg3;
-  std::string result5 = optionalArg4;
+  double result1 = optionalArg1;
+  size_t result2 = optionalArg2;
+  std::string result3 = optionalArg3;
 
-  CHECK( result1 == 4.32 );
-  CHECK( result2 == 6.54 );
-  CHECK( result3 == 12 );
-  CHECK( result4 == false );
-  CHECK( result5 == "hello" );
+  CHECK( result1 == 6.54 );
+  CHECK( result2 == 12 );
+  CHECK( result3 == "hello" );
 }
 
 SECTION( "parseCommandLineWithInputFile" )
 {
   ArgumentManager::getInstance( ).clear( );
 
-  DoubleArg autoArg1( "doubleArgument", "" );
-  IntArg autoArg2( "intArgument", "" );
-  StringArg autoArg3( "stringArgument", "" );
-  SizeArg autoArg4( "sizeArgument", "" );
-  BoolArg autoArg5( "bool1", "" );
-  BoolArg autoArg6( "bool2", "" );
+  DoubleArg autoArg1( "doubleArgument", "", 0 );
+  IntArg autoArg2( "intArgument", "", 0 );
+  StringArg autoArg3( "stringArgument", "", "0" );
+  SizeArg autoArg4( "sizeArgument", "", 0 );
+  BoolArg autoArg5( "bool1", "", 0 );
+  BoolArg autoArg6( "bool2", "", 0 );
 
   int argc = 1 + 2;
   char arg0[] = "driver";
@@ -141,56 +134,25 @@ SECTION( "optionalWithoutAssignmentFails" )
   CHECK_THROWS_AS( TestArgumentParser::parseCommandLine( argc, argv ), std::exception );
 }
 
-SECTION( "missingRequiredArgumentsFails" )
-{
-  DoubleArg requiredArg1( "required", "First required" );
-
-  int argc = 1;
-  char arg0[] = "driver";
-  char* argv[] =
-  { &arg0[0], NULL};
-
-  CHECK_THROWS_AS( TestArgumentParser::parseCommandLine( argc, argv ), std::exception );
-}
-
-SECTION( "optionalInsteadOfRequiredArgumentFails" )
-{
-  DoubleArg requiredArg1( "required", "First required" );
-
-  int argc = 2;
-  char arg0[] = "driver";
-  char arg1[] = "--optional1=10";
-  char* argv[] =
-  { &arg0[0], &arg1[0], NULL};
-
-  CHECK_THROWS_AS( TestArgumentParser::parseCommandLine( argc, argv ), std::exception );
-}
-
 SECTION( "listArguments" )
 {
 
   DoubleArg optionalArg1( "optional1", "First optional", 1.23 );
-  DoubleArg requiredArg1( "required1", "First required" );
   SizeArg optionalArg2( "optional2", "Second optional", 23 );
-  StringArg requiredArg2( "required2", "Second required" );
   StringArg optionalArg3( "optional3", "Third optional", "3.45" );
 
-  int argc = 5 + 1;
+  int argc = 3 + 1;
   char arg0[] = "driver";
-  char arg1[] = "4.32";
-  char arg2[] = "tino";
-  char arg3[] = "--optional1=6.54";
-  char arg4[] = "--optional2=12";
-  char arg5[] = "--optional3=hello";
+  char arg1[] = "--optional1=6.54";
+  char arg2[] = "--optional2=12";
+  char arg3[] = "--optional3=hello";
   char* argv[] =
-  { &arg0[0], &arg1[0], &arg2[0], &arg3[0], &arg4[0], &arg5[0], NULL};
+  { &arg0[0], &arg1[0], &arg2[0], &arg3[0], NULL};
 
   CHECK_NOTHROW( TestArgumentParser::parseCommandLine( argc, argv ) );
 
   std::string result;
   std::string reference;
-  reference += "                     required1 : 4.320000000000000e+00          # (double) First required\n";
-  reference += "                     required2 : tino                           # (string) Second required\n";
   reference += "                     optional1 : 6.540000000000000e+00          # (double) First optional\n";
   reference += "                     optional2 : 12                             # (size_t) Second optional\n";
   reference += "                     optional3 : hello                          # (string) Third optional\n";
@@ -201,5 +163,6 @@ SECTION( "listArguments" )
 
 }
 
-} // namespace utilities
-} // namespace adhocpp
+}
+ // namespace utilities
+}// namespace adhocpp

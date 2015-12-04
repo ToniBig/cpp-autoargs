@@ -49,8 +49,6 @@ private:
 
   static std::string createPurposeBlock( const DriverData& driverData );
 
-  static std::string createRequiredArgumentsBlock( const DriverData& driverData );
-
   static std::string createOptionalArgumentsBlock( const DriverData& driverData );
 
   static std::string createBuiltInArgumentsBlock( const DriverData& driverData );

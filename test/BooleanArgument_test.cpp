@@ -31,50 +31,37 @@ namespace adhocpp
 namespace utilities
 {
 
-TEST_CASE( "Constructor" )
+TEST_CASE( "Boolean arguments" )
 {
   ArgumentManager::getInstance( ).clear( );
-  CHECK_NOTHROW( BooleanArgument( "boolOption", "Yes or no?" ) );
-}
 
-TEST_CASE ( "Boolean Argument: Default constructor with explicit default" )
-{
-  ArgumentManager::getInstance( ).clear( );
-  CHECK_NOTHROW( BooleanArgument( "boolOption", "Yes or no?", true ) );
-}
-
-struct Fixture
-{
-  bool result;
-
-  ~Fixture( )
-  {
-    ArgumentManager::getInstance( ).clear( );
-  }
-};
-
-TEST_CASE_METHOD( Fixture, "Boolean arguments" )
-{
-
-SECTION( "conversionUsingDefault" )
-{
-  BooleanArgument argument( "boolOption", "Yes or no?" );
-
-  CHECK_NOTHROW( result = argument );
-
-CHECK( result == false );
-}
-
-SECTION( "conversionUsingNonDefault" )
-{
   BooleanArgument argument( "boolOption", "Yes or no?", true );
 
+  bool result;
+
+  SECTION( "Implicit conversion" ){
+
   CHECK_NOTHROW( result = argument );
 
-CHECK( result == true );
+  CHECK( result == true );
+}
+
+  SECTION("conversion using value member"){
+
+  CHECK_NOTHROW( result = argument.value() );
+
+  CHECK( result == true );
+}
+
+  SECTION("conversion using dereferenciation"){
+
+  CHECK_NOTHROW( result = *argument );
+
+  CHECK( result == true );
 }
 
 }
 
-} // namespace utilities
-} // namespace adhocpp
+}
+ // namespace utilities
+}// namespace adhocpp

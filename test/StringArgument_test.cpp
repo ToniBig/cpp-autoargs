@@ -31,47 +31,26 @@ namespace adhocpp
 namespace utilities
 {
 
-TEST_CASE ( "String Argument: Default constructor with out explicit default" )
+TEST_CASE( "String Argument" )
 {
   ArgumentManager::getInstance( ).clear( );
-  CHECK_NOTHROW( StringArgument( "stringOption", "Yes or no?" ) );
-}
-
-TEST_CASE ( "Default constructor with explicit default" )
-{
-  ArgumentManager::getInstance( ).clear( );
-  CHECK_NOTHROW( StringArgument( "stringOption", "Yes or no?", "Hello World" ) );
-}
-
-struct Fixture
-{
+  StringArgument argument( "stringOption", "Yes or no?", "No" );
   std::string result;
 
-  ~Fixture( )
-  {
-    ArgumentManager::getInstance( ).clear( );
-  }
-};
-
-TEST_CASE_METHOD( Fixture, "String Argument" )
-{
-
-  SECTION( "conversionUsingDefault" ){
-  StringArgument argument( "stringOption", "Yes or no?" );
-
-  CHECK_THROWS_AS( result = argument, std::runtime_error );
-}
-
-SECTION( "conversionUsingNonDefault" )
-{
-  StringArgument argument( "stringOption", "Yes or no?", "No" );
+  SECTION( "Conversion" ){
 
   CHECK_NOTHROW( result = argument );
+  CHECK( result == "No" );
 
+  CHECK_NOTHROW( result = argument.value() );
+  CHECK( result == "No" );
+
+  CHECK_NOTHROW( result = *argument );
   CHECK( result == "No" );
 }
 
 }
 
-} // namespace utilities
-} // namespace adhocpp
+}
+ // namespace utilities
+}// namespace adhocpp

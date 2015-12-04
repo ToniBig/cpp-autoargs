@@ -34,17 +34,14 @@ class BooleanArgument : public AbsArgument
 {
 public:
   BooleanArgument( const std::string& placeHolder,
-                   const std::string& helpText );
-
-  BooleanArgument( const std::string& placeHolder,
                    const std::string& helpText,
-                   bool defaultValue );
+                   bool value );
 
   virtual ~BooleanArgument( );
 
   std::string getType( ) const;
 
-  std::string getDefaultValue( ) const;
+  std::string getValue( ) const;
 
   void setValue( std::string value );
 
@@ -52,11 +49,13 @@ public:
 
   bool value( ) const;
 
+  bool operator*( ) const;
+
 private:
   explicit BooleanArgument( const BooleanArgument& );
   BooleanArgument& operator=( const BooleanArgument& );
 
-  bool myDefaultValue;
+  bool myValue;
 };
 
 } // namespace utilities

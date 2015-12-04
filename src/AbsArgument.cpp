@@ -29,13 +29,11 @@ namespace utilities
 {
 
 AbsArgument::AbsArgument( const std::string& placeHolder,
-                          const std::string& helpText,
-                          bool defaultValueState ) :
+                          const std::string& helpText ) :
         myPlaceHolder( placeHolder ),
-        myHelpText( helpText ),
-        myDefaultValueState( defaultValueState )
+        myHelpText( helpText )
 {
-    ArgumentManager::getInstance( ).registerArgument( *this );
+  ArgumentManager::getInstance( ).registerArgument( *this );
 }
 
 AbsArgument::~AbsArgument( )
@@ -51,17 +49,12 @@ AbsArgument::~AbsArgument( )
 
 std::string AbsArgument::getPlaceHolder( ) const
 {
-    return myPlaceHolder;
+  return myPlaceHolder;
 }
 
 std::string AbsArgument::getHelpText( ) const
 {
-    return myHelpText;
-}
-
-bool AbsArgument::hasDefaultValue( ) const
-{
-    return myDefaultValueState;
+  return myHelpText;
 }
 
 } // namespace utilities

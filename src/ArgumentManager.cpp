@@ -28,173 +28,104 @@
 #include <iostream>
 #include <stdexcept>
 
-namespace adhocpp {
-namespace utilities {
+namespace adhocpp
+{
+namespace utilities
+{
 
 ArgumentManager& ArgumentManager::getInstance( )
 {
-    static ArgumentManager myInstance; // Meyers Singleton
+  static ArgumentManager myInstance; // Meyers Singleton
 
-    return myInstance;
+  return myInstance;
 }
 
 void ArgumentManager::addDefaultArgument( AbsArgument* argument )
 {
-    bool alreadyDefined = myOptionalArguments.count( argument->getPlaceHolder( ) ) != 0;
+  bool alreadyDefined = myArguments.count( argument->getPlaceHolder( ) ) != 0;
 
-    if ( alreadyDefined )
-    {
-      throw std::runtime_error( "Optional Argument " + argument->getPlaceHolder( ) + " has already been defined!" );
-    }
-    else
-    {
-      myOptionalArguments[argument->getPlaceHolder( )] = argument;
-    }
+  if ( alreadyDefined )
+  {
+    throw std::runtime_error( "Optional Argument " + argument->getPlaceHolder( ) + " has already been defined!" );
+  }
+  else
+  {
+    myArguments[argument->getPlaceHolder( )] = argument;
+  }
 }
 
-size_t ArgumentManager::getNumberOfOptionalArguments( ) const
+size_t ArgumentManager::getNumberOfArguments( ) const
 {
-    return myOptionalArguments.size( );
-}
-
-size_t ArgumentManager::getNumberOfRequiredArguments( ) const
-{
-    return myRequiredArguments.size( );
+  return myArguments.size( );
 }
 
 void ArgumentManager::clear( )
 {
-    myOptionalArguments.clear( );
-    myRequiredArguments.clear( );
+  myArguments.clear( );
 }
 
-void ArgumentManager::setRequiredArguments( StringVector argumentValues )
+void ArgumentManager::setArguments( StringVector argumentValues )
 {
-    for ( size_t iArgument = 0; iArgument < myRequiredArguments.size( ); ++iArgument )
+  for ( size_t iArgument = 0; iArgument < argumentValues.size( ); ++iArgument )
+  {
+    std::string currentArgument = argumentValues[iArgument];
+
+    if ( isOptional( currentArgument ) )
     {
-      std::string currentArgument = argumentValues.at( iArgument );
+      size_t pos = currentArgument.find( '=' );
 
-      if ( isOptional( currentArgument ) )
+      std::string placeHolder = currentArgument.substr( 2, pos - 2 );
+      std::string value = currentArgument.substr( pos + 1, currentArgument.size( ) );
+
+      if ( myArguments.count( placeHolder ) == 0 )
       {
-        throw std::runtime_error( "Argument is optional: " + currentArgument + ". Should be required!" );
+        throw std::runtime_error( "Argument not found: " + placeHolder );
       }
 
-      myRequiredArguments.at( iArgument )->setValue( currentArgument );
-    } // end of iArgument-loop
-}
-
-void ArgumentManager::setOptionalArguments( StringVector argumentValues )
-{
-    for ( size_t iArgument = 0; iArgument < argumentValues.size( ); ++iArgument )
+      myArguments[placeHolder]->setValue( value );
+    }
+    else
     {
-      std::string currentArgument = argumentValues[iArgument];
+      throw std::runtime_error( "Argument is not optional: " + currentArgument );
+    }
 
-      if ( isOptional( currentArgument ) )
-      {
-        size_t pos = currentArgument.find( '=' );
-
-        std::string placeHolder = currentArgument.substr( 2, pos - 2 );
-        std::string value = currentArgument.substr( pos + 1, currentArgument.size( ) );
-
-        if ( myOptionalArguments.count( placeHolder ) == 0 )
-        {
-          throw std::runtime_error( "Argument not found: " + placeHolder );
-        }
-
-        myOptionalArguments[placeHolder]->setValue( value );
-      }
-      else
-      {
-        throw std::runtime_error( "Argument is not optional: " + currentArgument );
-      }
-
-    } // end of iArgument-loop
+  } // end of iArgument-loop
 }
 
 bool ArgumentManager::isOptional( std::string argument ) const
 {
-    bool hasDash = ( argument[0] == '-' && argument[1] == '-' );
+  bool hasDash = ( argument[0] == '-' && argument[1] == '-' );
 
-    size_t pos = argument.find( '=' );
+  size_t pos = argument.find( '=' );
 
-    bool hasAssignment = pos != std::string::npos;
+  bool hasAssignment = pos != std::string::npos;
 
-    return ( hasDash && hasAssignment );
+  return ( hasDash && hasAssignment );
 }
 
 DriverData ArgumentManager::getDriverData( ) const
 {
-    DriverData data;
+  DriverData data;
 
-    for ( const auto& argument : myRequiredArguments )
-    {
-      data.requiredArguments.push_back(
-          makeArgument( argument->getPlaceHolder( ), argument->getHelpText( ), argument->getType( ), argument->getDefaultValue( ) ) );
-    } // end of argument-loop
+  for ( const auto& argument : myArguments )
+  {
+    data.optionalArguments.push_back( makeArgument( argument.second->getPlaceHolder( ), argument.second->getHelpText( ), argument.second->getType( ), argument.second->getValue( ) ) );
+  } // end of argument-loop
 
-    for ( const auto& argument : myOptionalArguments )
-    {
-      data.optionalArguments.push_back(
-          makeArgument( argument.second->getPlaceHolder( ), argument.second->getHelpText( ), argument.second->getType( ),
-              argument.second->getDefaultValue( ) ) );
-    } // end of argument-loop
-
-    return data;
-}
-
-void ArgumentManager::addRequiredArgument( AbsArgument* argument )
-{
-    auto iter = std::find( myRequiredArguments.begin( ), myRequiredArguments.end( ), argument );
-
-    if ( iter == myRequiredArguments.end( ) || myRequiredArguments.empty( ) )
-    {
-      myRequiredArguments.push_back( argument );
-    }
-    else
-    {
-      throw std::runtime_error( "Required Argument " + argument->getPlaceHolder( ) + " has already been defined!" );
-    }
+  return data;
 }
 
 void ArgumentManager::registerArgument( AbsArgument& argument )
 {
-    if ( argument.hasDefaultValue( ) )
-    {
-      addDefaultArgument( &argument );
-    }
-    else
-    {
-      addRequiredArgument( &argument );
-    }
+  addDefaultArgument( &argument );
 }
 
 void ArgumentManager::unregisterArgument( AbsArgument& argument )
 {
-    auto isInMap = [&](AbsArgument& argument)
-    {
-      return (myOptionalArguments.count( argument.getPlaceHolder() ) == 1);
-    };
-
-    auto vectorIter = std::find( myRequiredArguments.begin( ), myRequiredArguments.end( ), &argument );
-
-    auto isInVector = [&](AbsArgument& argument)
-    {
-      return (vectorIter != myRequiredArguments.end( ));
-    };
-
-    if ( isInVector( argument ) )
-    {
-      myRequiredArguments.erase( vectorIter );
-    }
-    else if ( isInMap( argument ) )
-    {
-      auto mapIter = myOptionalArguments.find( argument.getPlaceHolder( ) );
-      myOptionalArguments.erase( mapIter );
-    }
-    else
-    {
-      throw std::runtime_error( "Argument " + argument.getPlaceHolder( ) + " has never been registered!" );
-    }
+  auto isInMap = [&](AbsArgument& argument)
+  {
+    return (myArguments.count( argument.getPlaceHolder() ) == 1);
+  };
 }
 
 void ArgumentManager::setArguments( PlaceHolderValueMap placeHoldersAndValues )
@@ -204,19 +135,8 @@ void ArgumentManager::setArguments( PlaceHolderValueMap placeHoldersAndValues )
     auto placeHolder = iterator->first;
     auto value = iterator->second;
 
-    // Look into required arguments
-    for ( auto argument : myRequiredArguments )
-    {
-      if ( argument->getPlaceHolder( ) == placeHolder )
-      {
-        argument->setValue( value );
-        break;
-      }
-    }
-
     // Look into optional arguments
-    for ( StringArgumentMap::iterator optionalIterator = myOptionalArguments.begin( ); optionalIterator != myOptionalArguments.end( );
-        ++optionalIterator )
+    for ( StringArgumentMap::iterator optionalIterator = myArguments.begin( ); optionalIterator != myArguments.end( ); ++optionalIterator )
     {
       if ( optionalIterator->first == placeHolder )
       {
