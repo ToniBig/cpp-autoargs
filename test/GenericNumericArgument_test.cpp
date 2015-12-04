@@ -26,12 +26,7 @@
 // --- Catch Includes ---
 #include "catch.hpp"
 
-//typedef boost::mpl::list<int,short,double,float,size_t> test_types;
-
-namespace adhocpp
-{
-namespace utilities
-{
+using namespace autoargs;
 
 TEST_CASE( "GenericNumericArgument: Default constructor with explicit default, int" )
 {
@@ -63,7 +58,6 @@ TEST_CASE( "GenericNumericArgument: Default constructor with explicit default, s
   CHECK_NOTHROW( GenericNumericArgument<size_t>( "numericOption", "What?", 1 ) );
 }
 
-
 #define UNUSED(expr) do { (void)(expr); } while (0)
 
 TEST_CASE( "Generic Argument" )
@@ -84,8 +78,7 @@ TEST_CASE( "Generic Argument" )
   CHECK( result == 2 );
 }
 
-SECTION( "conversion using non default float" )
-{
+  SECTION( "conversion using non default float" ){
   GenericNumericArgument<float> argument( "numericOption", "Yes or no?", 2 );
 
   float result;
@@ -99,8 +92,7 @@ SECTION( "conversion using non default float" )
   CHECK( result == 2 );
 }
 
-SECTION( "conversion using non default double" )
-{
+  SECTION( "conversion using non default double" ){
   GenericNumericArgument<double> argument( "numericOption", "Yes or no?", 2 );
 
   double result;
@@ -114,8 +106,7 @@ SECTION( "conversion using non default double" )
   CHECK( result == 2 );
 }
 
-SECTION( "conversion using non default size_t" )
-{
+  SECTION( "conversion using non default size_t" ){
   GenericNumericArgument<size_t> argument( "numericOption", "Yes or no?", 2 );
 
   size_t result;
@@ -130,7 +121,3 @@ SECTION( "conversion using non default size_t" )
 }
 
 }
-
-}
- // namespace utilities
-}// namespace adhocpp

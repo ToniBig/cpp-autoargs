@@ -28,10 +28,10 @@
 // --- Standard Includes ---
 #include <string>
 
-namespace adhocpp {
-namespace utilities {
+namespace autoargs
+{
 
-struct AdhocppExceptionPolicy
+struct ExceptionPolicy
 {
   static void error( std::string message );
 };
@@ -65,8 +65,7 @@ private:
   static std::string description;
 };
 
-} // namespace utilities
-} // namespace adhocpp
+} // namespace autoargs
 
 #include "GenericArgumentParser_impl.hpp"
 

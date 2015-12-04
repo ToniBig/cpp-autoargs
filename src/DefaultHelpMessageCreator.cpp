@@ -22,9 +22,7 @@
 // --- Internal Includes ---
 #include "../inc/DefaultHelpMessageCreator.hpp"
 
-namespace adhocpp
-{
-namespace utilities
+namespace autoargs
 {
 
 const size_t placeHolderWidth = 25;
@@ -90,7 +88,7 @@ std::string DefaultHelpMessageCreator::createPurposeBlock( const DriverData& dri
   return description;
 }
 
-std::string DefaultHelpMessageCreator::createArgumentsBlock( const std::vector<adhocpp::utilities::ArgumentData>& arguments,
+std::string DefaultHelpMessageCreator::createArgumentsBlock( const std::vector<ArgumentData>& arguments,
                                                              const std::string& argumentsType,
                                                              const std::string& prefix )
 {
@@ -165,5 +163,5 @@ std::string DefaultHelpMessageCreator::getHelpMessage( const DriverData& driverD
   return description;
 }
 
-} // namespace utilities
-} // namespace adhocpp
+} // namespace autoargs
+

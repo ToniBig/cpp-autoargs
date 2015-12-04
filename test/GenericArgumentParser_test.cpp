@@ -27,11 +27,6 @@
 // --- Catch Includes ---
 #include "catch.hpp"
 
-namespace adhocpp
-{
-namespace utilities
-{
-
 using namespace autoargs;
 
 struct Fixture
@@ -162,7 +157,3 @@ SECTION( "listArguments" )
 }
 
 }
-
-}
- // namespace utilities
-}// namespace adhocpp

@@ -25,9 +25,7 @@
 // --- Standard Includes ---
 #include <string>
 
-namespace adhocpp
-{
-namespace utilities
+namespace autoargs
 {
 
 class AbsArgument
@@ -54,6 +52,5 @@ private:
   std::string myHelpText;
 };
 
-} // namespace utilities
-} // namespace adhocpp
+} // namespace autoargs
 #endif // AUTOARGS_ABSARGUMENT_HPP_

@@ -98,5 +98,7 @@ IF ( ${AUTOARGS_BUILD_EXAMPLES} )
 
     ADD_EXECUTABLE ( hello1 examples/hello1.cpp)
     ADD_EXECUTABLE ( hello2 examples/hello2.cpp)
+    ADD_EXECUTABLE ( hello3 examples/hello3.cpp)
+    TARGET_LINK_LIBRARIES ( hello3 ${PROJECT_NAME} )
 
 ENDIF ( ${AUTOARGS_BUILD_EXAMPLES} )

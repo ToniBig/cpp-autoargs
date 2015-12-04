@@ -26,10 +26,7 @@
 // --- Catch Includes ---
 #include "catch.hpp"
 
-namespace adhocpp
-{
-namespace utilities
-{
+using namespace autoargs;
 
 TEST_CASE( "String Argument" )
 {
@@ -50,7 +47,3 @@ TEST_CASE( "String Argument" )
 }
 
 }
-
-}
- // namespace utilities
-}// namespace adhocpp

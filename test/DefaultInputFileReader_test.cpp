@@ -25,10 +25,8 @@
 // --- Catch Includes ---
 #include "catch.hpp"
 
-namespace adhocpp
-{
-namespace utilities
-{
+using namespace autoargs;
+
 
 TEST_CASE( "parse input file" )
 {
@@ -49,7 +47,3 @@ TEST_CASE( "parse input file" )
 }
 
 }
-
-}
- // namespace utilities
-}// namespace adhocpp

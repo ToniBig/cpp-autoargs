@@ -23,9 +23,7 @@
 #include "../inc/AbsArgument.hpp"
 #include "../inc/ArgumentManager.hpp"
 
-namespace adhocpp
-{
-namespace utilities
+namespace autoargs
 {
 
 AbsArgument::AbsArgument( const std::string& placeHolder,
@@ -57,5 +55,5 @@ std::string AbsArgument::getHelpText( ) const
   return myHelpText;
 }
 
-} // namespace utilities
-} // namespace adhocpp
+} // namespace autoargs
+

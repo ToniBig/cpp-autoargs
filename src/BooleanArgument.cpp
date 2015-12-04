@@ -26,9 +26,7 @@
 // --- Std Includes ---
 #include <stdexcept>
 
-namespace adhocpp
-{
-namespace utilities
+namespace autoargs
 {
 
 BooleanArgument::BooleanArgument( const std::string& placeHolder,
@@ -91,5 +89,5 @@ bool BooleanArgument::operator *( ) const
   return myValue;
 }
 
-} // namespace utilities
-} // namespace adhocpp
+} // namespace autoargs
+

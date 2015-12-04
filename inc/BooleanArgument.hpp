@@ -25,9 +25,7 @@
 // --- Internal Includes ---
 #include "AbsArgument.hpp"
 
-namespace adhocpp
-{
-namespace utilities
+namespace autoargs
 {
 
 class BooleanArgument : public AbsArgument
@@ -58,6 +56,5 @@ private:
   bool myValue;
 };
 
-} // namespace utilities
-} // namespace adhocpp
+} // namespace autoargs
 #endif // AUTOARGS_BOOLEANARGUMENT_HPP_

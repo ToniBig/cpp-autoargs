@@ -30,11 +30,6 @@
 #include <iostream>
 #include <sstream>
 
-namespace adhocpp
-{
-namespace utilities
-{
-
 using namespace autoargs;
 
 TEST_CASE ( "getInstance" )
@@ -103,7 +98,3 @@ TEST_CASE( "Tests with argument manager reset" )
   CHECK( result6 == true );
 }
 }
-
-}
- // namespace adhocpp
-}// namespace utilities

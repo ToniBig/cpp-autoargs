@@ -25,9 +25,7 @@
 // --- Internal Includes ---
 #include "AbsArgument.hpp"
 
-namespace adhocpp
-{
-namespace utilities
+namespace autoargs
 {
 
 template<typename T>
@@ -59,8 +57,7 @@ private:
   T myValue;
 };
 
-} // namespace utilities
-} // namespace adhocpp
+} // namespace autoargs
 
 #include "GenericNumericArgument_impl.hpp"
 

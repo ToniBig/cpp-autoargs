@@ -28,9 +28,7 @@
 // --- Standard Includes ---
 #include <string>
 
-namespace adhocpp
-{
-namespace utilities
+namespace autoargs
 {
 
 class DefaultHelpMessageCreator
@@ -56,11 +54,10 @@ private:
   static std::string appendWhiteSpace( const std::string& input,
                                        size_t finalWidth );
 
-  static std::string createArgumentsBlock( const std::vector<adhocpp::utilities::ArgumentData>& arguments,
+  static std::string createArgumentsBlock( const std::vector<ArgumentData>& arguments,
                                            const std::string& argumentsType,
                                            const std::string& prefix );
 };
 
-} // namespace utilities
-} // namespace adhocpp
+} // namespace autoargs
 #endif // AUTOARGS_DEFAULTHELPMESSAGECREATOR_HPP_

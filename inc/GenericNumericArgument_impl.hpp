@@ -25,9 +25,7 @@
 #include <stdexcept>
 #include <type_traits>
 
-namespace adhocpp
-{
-namespace utilities
+namespace autoargs
 {
 
 template<typename T>
@@ -120,10 +118,9 @@ inline T GenericNumericArgument<T>::value( ) const
 }
 
 template<typename T>
-inline T adhocpp::utilities::GenericNumericArgument<T>::operator *( ) const
+inline T GenericNumericArgument<T>::operator *( ) const
 {
   return this->value( );
 }
 
-} // namespace utilities
-} // namespace adhocpp
+} // namespace autoargs

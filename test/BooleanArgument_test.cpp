@@ -26,10 +26,7 @@
 // --- Catch Includes ---
 #include "catch.hpp"
 
-namespace adhocpp
-{
-namespace utilities
-{
+using namespace autoargs;
 
 TEST_CASE( "Boolean arguments" )
 {
@@ -61,7 +58,3 @@ TEST_CASE( "Boolean arguments" )
 }
 
 }
-
-}
- // namespace utilities
-}// namespace adhocpp

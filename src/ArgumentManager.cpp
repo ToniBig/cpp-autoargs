@@ -28,9 +28,7 @@
 #include <iostream>
 #include <stdexcept>
 
-namespace adhocpp
-{
-namespace utilities
+namespace autoargs
 {
 
 ArgumentManager& ArgumentManager::getInstance( )
@@ -156,6 +154,5 @@ ArgumentManager::~ArgumentManager( )
 {
 }
 
-} // namespace utilities
-} // namespace adhocpp
+} // namespace autoargs
 

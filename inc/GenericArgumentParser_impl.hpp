@@ -29,15 +29,13 @@
 #include <sstream>
 #include <stdexcept>
 
-namespace adhocpp
-{
-namespace utilities
+namespace autoargs
 {
 
 template<typename HelpMessagePolicy, typename ErrorPolicy, typename InputFilePolicy>
 std::string GenericArgumentParser<HelpMessagePolicy, ErrorPolicy, InputFilePolicy>::description = "";
 
-inline void AdhocppExceptionPolicy::error( std::string message )
+inline void ExceptionPolicy::error( std::string message )
 {
   throw std::runtime_error( message );
 }
@@ -164,5 +162,5 @@ inline std::string GenericArgumentParser<HelpMessagePolicy, ErrorPolicy, InputFi
   return listOfArguments.str( );
 }
 
-} // namespace utilities
-} // namespace adhocpp
+} // namespace autoargs
+

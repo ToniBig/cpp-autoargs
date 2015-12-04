@@ -28,9 +28,7 @@
 #include <sstream>
 #include <stdexcept>
 
-namespace adhocpp
-{
-namespace utilities
+namespace autoargs
 {
 
 PlaceHolderValueMap DefaultInputFileReader::parseInputFile( const std::string& inputFile )
@@ -100,5 +98,4 @@ PlaceHolderValueMap DefaultInputFileReader::parseInputFile( const std::string& i
   return result;
 }
 
-} // namespace utilities 
-} // namespace adhocpp
+} // namespace autoargs

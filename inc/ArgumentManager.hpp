@@ -30,13 +30,11 @@
 #include <map>
 #include <vector>
 
-namespace adhocpp
-{
-namespace utilities
-{
-
 typedef std::vector<std::string> StringVector;
 typedef std::map<std::string, std::string> PlaceHolderValueMap;
+
+namespace autoargs
+{
 
 class ArgumentManager
 {
@@ -74,6 +72,5 @@ private:
   StringArgumentMap myArguments;
 };
 
-} // namespace utilities
-} // namespace adhocpp
+} // namespace autoargs
 #endif // AUTOARGS_ARGUMENTMANAGER_HPP_

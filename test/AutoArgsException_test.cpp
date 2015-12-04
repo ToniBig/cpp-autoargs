@@ -30,10 +30,7 @@
 #include <iostream>
 #include <sstream>
 
-namespace adhocpp
-{
-namespace utilities
-{
+using namespace autoargs;
 
 TEST_CASE ( "Default callling what" )
 {
@@ -70,7 +67,3 @@ TEST_CASE ( "Default not callling what" )
 
   std::cout.rdbuf( coutbuf ); //reset to standard output again
 }
-
-}
-// namespace utilities
-}// namespace adhocpp

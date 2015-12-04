@@ -25,9 +25,7 @@
 // --- Standard Includes ---
 #include <stdexcept>
 
-namespace adhocpp
-{
-namespace utilities
+namespace autoargs
 {
 
 StringArgument::StringArgument( const std::string& placeHolder,
@@ -72,5 +70,5 @@ std::string StringArgument::operator *( ) const
   return myValue;
 }
 
-} // namespace utilities
-} // namespace adhocpp
+} // namespace autoargs
+

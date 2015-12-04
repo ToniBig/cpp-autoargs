@@ -25,10 +25,7 @@
 // --- Catch Includes ---
 #include "catch.hpp"
 
-namespace adhocpp
-{
-namespace utilities
-{
+using namespace autoargs;
 
 TEST_CASE ( "get help description" )
 {
@@ -48,8 +45,7 @@ TEST_CASE ( "get help description" )
   data.builtInArguments.push_back( makeArgument( "version", "print the version of AdhoC++ being used" ) );
 
   std::string description;
-  std::string reference =
-      "Usage: \n"
+  std::string reference = "Usage: \n"
       "myFancyApp [--options]\n"
       "myFancyApp --input inputFileName\n"
       "\n"
@@ -74,5 +70,3 @@ TEST_CASE ( "get help description" )
   CHECK( description == reference );
 }
 
-} // namespace utilities
-} // namespace adhocpp
