@@ -34,6 +34,7 @@ PROJECT ( autoargs )
 OPTION ( AUTOARGS_ENABLE_TESTING "Enable tests for AutoArgs library" ON )
 OPTION ( AUTOARGS_SHARED_LIBRARY "Build AutoArgs as shared library" ON )
 OPTION ( AUTOARGS_ADD_CXX11_FLAG "Add -std=c++11 to CMAKE_CXX_FLAGS" ON )
+OPTION ( AUTOARGS_BUILD_EXAMPLES "Compile the accompanying examples" ON )
 
 IF( ${AUTOARGS_ADD_CXX11_FLAG} )
   
@@ -88,3 +89,14 @@ IF ( ${AUTOARGS_ENABLE_TESTING} )
 	                   ${PROJECT_NAME}_testrunner )
 
 ENDIF ( ${AUTOARGS_ENABLE_TESTING} )
+
+#------------------------------------------------------------------------------
+# CREATE EXAMPLES
+#------------------------------------------------------------------------------
+
+IF ( ${AUTOARGS_BUILD_EXAMPLES} )
+
+    ADD_EXECUTABLE ( hello1 examples/hello1.cpp)
+    ADD_EXECUTABLE ( hello2 examples/hello2.cpp)
+
+ENDIF ( ${AUTOARGS_BUILD_EXAMPLES} )
