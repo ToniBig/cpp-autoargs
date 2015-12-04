@@ -32,17 +32,10 @@ namespace utilities
 {
 
 BooleanArgument::BooleanArgument( const std::string& placeHolder,
-                                  const std::string& helpText ) :
-        AbsArgument( placeHolder, helpText, true ),
-        myDefaultValue( false )
-{
-}
-
-BooleanArgument::BooleanArgument( const std::string& placeHolder,
                                   const std::string& helpText,
-                                  bool defaultValue ) :
-        AbsArgument( placeHolder, helpText, true ),
-        myDefaultValue( defaultValue )
+                                  bool value ) :
+        AbsArgument( placeHolder, helpText ),
+        myValue( value )
 {
 }
 
@@ -52,47 +45,50 @@ BooleanArgument::~BooleanArgument( )
 
 std::string BooleanArgument::getType( ) const
 {
-    return "bool";
+  return "bool";
 }
 
-std::string BooleanArgument::getDefaultValue( ) const
+std::string BooleanArgument::getValue( ) const
 {
-    if ( myDefaultValue )
-    {
-      return "true";
-    }
-    else
-    {
-      return "false";
-    }
+  if ( myValue )
+  {
+    return "true";
+  }
+  else
+  {
+    return "false";
+  }
 }
 
 void BooleanArgument::setValue( std::string value )
 {
-    if ( value == "true" || value == "1" )
-    {
-      myDefaultValue = true;
-    }
-    else if ( value == "false" || value == "0" )
-    {
-      myDefaultValue = false;
-    }
-    else
-    {
-      throw std::runtime_error( "Provided incorrect argument value. Allowed values are: 0, 1, true, false." );
-    }
-
-    myDefaultValueState = true;
+  if ( value == "true" || value == "1" )
+  {
+    myValue = true;
+  }
+  else if ( value == "false" || value == "0" )
+  {
+    myValue = false;
+  }
+  else
+  {
+    throw std::runtime_error( "Provided incorrect argument value. Allowed values are: 0, 1, true, false." );
+  }
 }
 
 BooleanArgument::operator bool( ) const
 {
-    return myDefaultValue;
+  return myValue;
 }
 
 bool BooleanArgument::value( ) const
 {
-    return myDefaultValue;
+  return myValue;
+}
+
+bool BooleanArgument::operator *( ) const
+{
+  return myValue;
 }
 
 } // namespace utilities

@@ -33,36 +33,6 @@ namespace adhocpp
 namespace utilities
 {
 
-TEST_CASE( "GenericNumericArgument: Default constructor with out explicit default, int" )
-{
-  ArgumentManager::getInstance( ).clear( );
-  CHECK_NOTHROW( GenericNumericArgument<int>( "numericOption", "What?" ) );
-}
-
-TEST_CASE( "GenericNumericArgument: Default constructor with out explicit default, short" )
-{
-  ArgumentManager::getInstance( ).clear( );
-  CHECK_NOTHROW( GenericNumericArgument<short>( "numericOption", "What?" ) );
-}
-
-TEST_CASE( "GenericNumericArgument: Default constructor with out explicit default, double" )
-{
-  ArgumentManager::getInstance( ).clear( );
-  CHECK_NOTHROW( GenericNumericArgument<double>( "numericOption", "What?" ) );
-}
-
-TEST_CASE( "GenericNumericArgument: Default constructor with out explicit default, float" )
-{
-  ArgumentManager::getInstance( ).clear( );
-  CHECK_NOTHROW( GenericNumericArgument<float>( "numericOption", "What?" ) );
-}
-
-TEST_CASE( "GenericNumericArgument: Default constructor with out explicit default, size_t" )
-{
-  ArgumentManager::getInstance( ).clear( );
-  CHECK_NOTHROW( GenericNumericArgument<size_t>( "numericOption", "What?" ) );
-}
-
 TEST_CASE( "GenericNumericArgument: Default constructor with explicit default, int" )
 {
   ArgumentManager::getInstance( ).clear( );
@@ -93,43 +63,25 @@ TEST_CASE( "GenericNumericArgument: Default constructor with explicit default, s
   CHECK_NOTHROW( GenericNumericArgument<size_t>( "numericOption", "What?", 1 ) );
 }
 
-struct Fixture
-{
-  ~Fixture( )
-  {
-    ArgumentManager::getInstance( ).clear( );
-  }
-};
 
 #define UNUSED(expr) do { (void)(expr); } while (0)
 
-TEST_CASE_METHOD( Fixture, "Generic Argument" )
+TEST_CASE( "Generic Argument" )
 {
+  ArgumentManager::getInstance( ).clear( );
 
-  SECTION("Conversion unsing default: int"){
-  GenericNumericArgument<int> argument( "numericOption", "Yes or no?" );
-
-  int result;
-  UNUSED( result );
-  CHECK_THROWS_AS( result = argument, std::runtime_error );
-}
-
-SECTION( "conversion using non default int" )
-{
+  SECTION( "conversion using non default int" ){
   GenericNumericArgument<int> argument( "numericOption", "Yes or no?", 2 );
 
   int result;
   CHECK_NOTHROW( result = argument );
   CHECK( result == 2 );
-}
 
-SECTION("Conversion unsing default: float")
-{
-  GenericNumericArgument<float> argument( "numericOption", "Yes or no?" );
+  CHECK_NOTHROW( result = argument.value() );
+  CHECK( result == 2 );
 
-  float result;
-  UNUSED( result );
-  CHECK_THROWS_AS( result = argument, std::runtime_error );
+  CHECK_NOTHROW( result = *argument );
+  CHECK( result == 2 );
 }
 
 SECTION( "conversion using non default float" )
@@ -139,15 +91,12 @@ SECTION( "conversion using non default float" )
   float result;
   CHECK_NOTHROW( result = argument );
   CHECK( result == 2 );
-}
 
-SECTION("Conversion unsing default: double")
-{
-  GenericNumericArgument<double> argument( "numericOption", "Yes or no?" );
+  CHECK_NOTHROW( result = argument.value() );
+  CHECK( result == 2 );
 
-  double result;
-  UNUSED( result );
-  CHECK_THROWS_AS( result = argument, std::runtime_error );
+  CHECK_NOTHROW( result = *argument );
+  CHECK( result == 2 );
 }
 
 SECTION( "conversion using non default double" )
@@ -157,15 +106,12 @@ SECTION( "conversion using non default double" )
   double result;
   CHECK_NOTHROW( result = argument );
   CHECK( result == 2 );
-}
 
-SECTION("Conversion unsing default: size_t")
-{
-  GenericNumericArgument<size_t> argument( "numericOption", "Yes or no?" );
+  CHECK_NOTHROW( result = argument.value() );
+  CHECK( result == 2 );
 
-  size_t result;
-  UNUSED( result );
-  CHECK_THROWS_AS( result = argument, std::runtime_error );
+  CHECK_NOTHROW( result = *argument );
+  CHECK( result == 2 );
 }
 
 SECTION( "conversion using non default size_t" )
@@ -174,6 +120,12 @@ SECTION( "conversion using non default size_t" )
 
   size_t result;
   CHECK_NOTHROW( result = argument );
+  CHECK( result == 2 );
+
+  CHECK_NOTHROW( result = argument.value() );
+  CHECK( result == 2 );
+
+  CHECK_NOTHROW( result = *argument );
   CHECK( result == 2 );
 }
 

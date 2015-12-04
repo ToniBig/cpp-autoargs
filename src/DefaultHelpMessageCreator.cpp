@@ -41,141 +41,128 @@ DefaultHelpMessageCreator::~DefaultHelpMessageCreator( )
 std::string DefaultHelpMessageCreator::appendWhiteSpace( const std::string& input,
                                                          size_t finalWidth )
 {
-    std::string output = input;
+  std::string output = input;
 
-    size_t currentWidth = output.size( );
+  size_t currentWidth = output.size( );
 
-    if ( currentWidth > finalWidth )
-    {
-      output += "\n\t" + std::string( finalWidth, ' ' );
-    }
-    else
-    {
-      size_t difference = finalWidth - currentWidth;
+  if ( currentWidth > finalWidth )
+  {
+    output += "\n\t" + std::string( finalWidth, ' ' );
+  }
+  else
+  {
+    size_t difference = finalWidth - currentWidth;
 
-      output += std::string( difference, ' ' );
-    }
+    output += std::string( difference, ' ' );
+  }
 
-    return output;
+  return output;
 }
 
 std::string DefaultHelpMessageCreator::createUsageBlock( const DriverData& driverData )
 {
-    std::string description;
+  std::string description;
 
-    description += "Usage: \n";
+  description += "Usage: \n";
 
-    description += driverData.driverName + " ";
+  description += driverData.driverName + " ";
 
-    for ( auto& argument : driverData.requiredArguments )
-    {
-      description += argument.placeHolder + " ";
-    }
-    description += "[--options]\n";
+  for ( auto& argument : driverData.requiredArguments )
+  {
+    description += argument.placeHolder + " ";
+  }
+  description += "[--options]\n";
 
-    description += driverData.driverName + " --input inputFileName\n";
+  description += driverData.driverName + " --input inputFileName\n";
 
-
-    return description;
+  return description;
 }
 
 std::string DefaultHelpMessageCreator::createPurposeBlock( const DriverData& driverData )
 {
-    std::string description;
+  std::string description;
 
-    if ( driverData.description.empty( ) == false )
-    {
-      description += "\nPurpose: \n\n" + driverData.description + "\n";
-    }
+  if ( driverData.description.empty( ) == false )
+  {
+    description += "\nPurpose: \n\n" + driverData.description + "\n";
+  }
 
-    return description;
+  return description;
 }
 
 std::string DefaultHelpMessageCreator::createArgumentsBlock( const std::vector<adhocpp::utilities::ArgumentData>& arguments,
                                                              const std::string& argumentsType,
                                                              const std::string& prefix )
 {
-    std::string description;
-    if ( arguments.empty( ) == false )
+  std::string description;
+  if ( arguments.empty( ) == false )
+  {
+    description += "\n" + argumentsType + ":\n";
+    for ( auto& argument : arguments )
     {
-      description += "\n" + argumentsType + ":\n";
-      for ( auto& argument : arguments )
+      description += "\n\t";
+      description += appendWhiteSpace( prefix + argument.placeHolder, placeHolderWidth );
+
+      if ( !argument.type.empty( ) )
       {
-        description += "\n\t";
-        description += appendWhiteSpace( prefix + argument.placeHolder, placeHolderWidth );
-
-        if ( !argument.type.empty( ) )
-        {
-          description += " : ";
-
-          if ( argument.defaultValue.empty( ) )
-          {
-            description += appendWhiteSpace( argument.type, typeValueWidth );
-          }
-          else
-          {
-            description += appendWhiteSpace( argument.type + " (" + argument.defaultValue + ")", typeValueWidth );
-          }
-        }
-
         description += " : ";
-        description += argument.helpText;
+
+        if ( argument.defaultValue.empty( ) )
+        {
+          description += appendWhiteSpace( argument.type, typeValueWidth );
+        }
+        else
+        {
+          description += appendWhiteSpace( argument.type + " (" + argument.defaultValue + ")", typeValueWidth );
+        }
       }
-      description += "\n";
+
+      description += " : ";
+      description += argument.helpText;
     }
+    description += "\n";
+  }
 
-    return description;
-}
-
-std::string DefaultHelpMessageCreator::createRequiredArgumentsBlock( const DriverData& driverData )
-{
-    auto arguments = driverData.requiredArguments;
-    std::string argumentsType( "Required arguments" );
-
-    return createArgumentsBlock( arguments, argumentsType, "" );
+  return description;
 }
 
 std::string DefaultHelpMessageCreator::createOptionalArgumentsBlock( const DriverData& driverData )
 {
-    auto arguments = driverData.optionalArguments;
-    std::string argumentsType( "Optional arguments" );
+  auto arguments = driverData.optionalArguments;
+  std::string argumentsType( "Optional arguments" );
 
-    return createArgumentsBlock( arguments, argumentsType, "--" );
+  return createArgumentsBlock( arguments, argumentsType, "--" );
 }
 
 std::string DefaultHelpMessageCreator::createBuiltInArgumentsBlock( const DriverData& driverData )
 {
-    auto arguments = driverData.builtInArguments;
-    std::string argumentsType( "Built-In arguments" );
+  auto arguments = driverData.builtInArguments;
+  std::string argumentsType( "Built-In arguments" );
 
-    return createArgumentsBlock( arguments, argumentsType, "--" );
+  return createArgumentsBlock( arguments, argumentsType, "--" );
 }
 
 std::string DefaultHelpMessageCreator::getHelpMessage( const DriverData& driverData )
 {
-    std::string description;
+  std::string description;
 
-    // Usage
+  // Usage
 
-    description += createUsageBlock( driverData );
+  description += createUsageBlock( driverData );
 
-    // Purpose
+  // Purpose
 
-    description += createPurposeBlock( driverData );
+  description += createPurposeBlock( driverData );
 
-    // Required arguments
+  // Optional Arguments
 
-    description += createRequiredArgumentsBlock( driverData );
+  description += createOptionalArgumentsBlock( driverData );
 
-    // Optional Arguments
+  // Built-In Arguments
 
-    description += createOptionalArgumentsBlock( driverData );
+  description += createBuiltInArgumentsBlock( driverData );
 
-    // Built-In Arguments
-
-    description += createBuiltInArgumentsBlock( driverData );
-
-    return description;
+  return description;
 }
 
 } // namespace utilities

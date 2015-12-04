@@ -39,9 +39,6 @@ TEST_CASE ( "get help description" )
 
   data.description = "Compute something";
 
-  data.requiredArguments.push_back( makeArgument( "required1", "First required", "double" ) );
-  data.requiredArguments.push_back( makeArgument( "requiredTwo", "Second required", "double" ) );
-
   data.optionalArguments.push_back( makeArgument( "optional1", "First optional", "double", "1.23" ) );
   data.optionalArguments.push_back( makeArgument( "optional2", "Second optional", "size_t", "23" ) );
   data.optionalArguments.push_back( makeArgument( "optional3", "Third optional", "bool", "false" ) );
@@ -53,17 +50,12 @@ TEST_CASE ( "get help description" )
   std::string description;
   std::string reference =
       "Usage: \n"
-      "myFancyApp required1 requiredTwo [--options]\n"
+      "myFancyApp [--options]\n"
       "myFancyApp --input inputFileName\n"
       "\n"
       "Purpose: \n"
       "\n"
       "Compute something\n"
-      "\n"
-      "Required arguments:\n"
-      "\n"
-      "\trequired1                 : double                           : First required\n"
-      "\trequiredTwo               : double                           : Second required\n"
       "\n"
       "Optional arguments:\n"
       "\n"
