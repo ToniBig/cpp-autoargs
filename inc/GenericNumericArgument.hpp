@@ -25,9 +25,7 @@
 // --- Internal Includes ---
 #include "AbsArgument.hpp"
 
-namespace adhocpp
-{
-namespace utilities
+namespace autoargs
 {
 
 template<typename T>
@@ -35,17 +33,14 @@ class GenericNumericArgument : public AbsArgument
 {
 public:
   GenericNumericArgument( const std::string& placeHolder,
-                          const std::string& helpText );
-
-  GenericNumericArgument( const std::string& placeHolder,
                           const std::string& helpText,
-                          T defaultValue );
+                          T value );
 
   virtual ~GenericNumericArgument( );
 
   std::string getType( ) const;
 
-  std::string getDefaultValue( ) const;
+  std::string getValue( ) const;
 
   void setValue( std::string value );
 
@@ -59,11 +54,10 @@ private:
   explicit GenericNumericArgument( const GenericNumericArgument& );
   GenericNumericArgument& operator=( const GenericNumericArgument& );
 
-  T myDefaultValue;
+  T myValue;
 };
 
-} // namespace utilities
-} // namespace adhocpp
+} // namespace autoargs
 
 #include "GenericNumericArgument_impl.hpp"
 

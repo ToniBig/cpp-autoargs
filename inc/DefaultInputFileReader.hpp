@@ -26,8 +26,8 @@
 #include <map>
 #include <string>
 
-namespace adhocpp {
-namespace utilities {
+namespace autoargs
+{
 
 typedef std::map<std::string, std::string> PlaceHolderValueMap;
 
@@ -43,6 +43,5 @@ private:
 
 };
 
-} // namespace utilities 
-} // namespace adhocpp
+} // namespace autoargs
 #endif // AUTOARGS_DEFAULTINPUTFILEREADER_HPP_

@@ -23,81 +23,65 @@
 #include "../inc/ArgumentManager.hpp"
 #include "../inc/autoargs.hpp"
 
-// --- Boost Includes ---
-#include <boost/test/unit_test.hpp>
+// --- Catch Includes ---
+#include "catch.hpp"
 
 // --- Standard Includes ---
 #include <iostream>
 #include <sstream>
 
-namespace adhocpp {
-namespace utilities {
-
 using namespace autoargs;
 
-BOOST_AUTO_TEST_SUITE (ArgumentManagerTest)
-
-BOOST_AUTO_TEST_CASE ( getInstance )
+TEST_CASE ( "getInstance" )
 {
-  BOOST_CHECK_NO_THROW( ArgumentManager::getInstance( ) );
+  CHECK_NOTHROW( ArgumentManager::getInstance( ) );
 }
 
-struct Fixture
+TEST_CASE( "Tests with argument manager reset" )
 {
-  ~Fixture( )
-  {
-    ArgumentManager::getInstance( ).clear( );
-  }
-};
+  ArgumentManager::getInstance( ).clear( );
 
-BOOST_FIXTURE_TEST_SUITE( TestsWithArgumentManagerReset, Fixture )
-
-BOOST_AUTO_TEST_CASE ( registerArgument )
-{
+  SECTION( "registerArgument" ){
   DoubleArg optionalArg1( "value1", "A value", 1.23 );
   DoubleArg optionalArg2( "value2", "A value", 1.23 );
-  DoubleArg requiredArg( "value", "A value" );
 
-  BOOST_CHECK_EQUAL( ArgumentManager::getInstance( ).getNumberOfOptionalArguments( ), 2 );
-  BOOST_CHECK_EQUAL( ArgumentManager::getInstance( ).getNumberOfRequiredArguments( ), 1 );
+  CHECK( ArgumentManager::getInstance( ).getNumberOfArguments( ) == 2 );
 }
 
-BOOST_AUTO_TEST_CASE ( registerArgumentsFails )
-{
+  SECTION( "registerArgumentsFails" ){
   DoubleArg optionalArg1( "value1", "A value", 1.23 );
   DoubleArg optionalArg2( "value2", "A value", 1.23 );
-  DoubleArg requiredArg( "value", "A value" );
 
-  BOOST_CHECK_THROW( ArgumentManager::getInstance( ).registerArgument( optionalArg1 ), std::runtime_error );
-  BOOST_CHECK_THROW( ArgumentManager::getInstance( ).registerArgument( optionalArg2 ), std::runtime_error );
-  BOOST_CHECK_THROW( ArgumentManager::getInstance( ).registerArgument( requiredArg ), std::runtime_error );
+  CHECK_THROWS_AS( ArgumentManager::getInstance( ).registerArgument( optionalArg1 ), std::runtime_error );
+  CHECK_THROWS_AS( ArgumentManager::getInstance( ).registerArgument( optionalArg2 ), std::runtime_error );
 }
 
-BOOST_AUTO_TEST_CASE ( getNumberOfArguments )
-{
+  SECTION( "getNumberOfArguments" ){
   DoubleArg optionalArg1( "optional1", "First optional", 1.23 );
-  DoubleArg requiredArg1( "required1", "First required" );
   SizeArg optionalArg2( "optional2", "Second optional", 23 );
-  BoolArg requiredArg2( "required2", "Second required" ); // Defaults to false
   StringArg optionalArg3( "optional3", "Third optional", "3.45" );
 
-  BOOST_CHECK_EQUAL( ArgumentManager::getInstance( ).getNumberOfOptionalArguments( ), 4 );
-  BOOST_CHECK_EQUAL( ArgumentManager::getInstance( ).getNumberOfRequiredArguments( ), 1 );
+  CHECK( ArgumentManager::getInstance( ).getNumberOfArguments( ) == 3 );
 }
 
-BOOST_AUTO_TEST_CASE ( setArgumentsUsingPlaceholderValueMap )
-{
-  PlaceHolderValueMap input = { { "doubleArgument", "1.23" }, { "intArgument", "23" }, { "stringArgument", "Hallo_Welt" }, { "sizeArgument", "34" }, {
-      "bool1", "0" }, { "bool2", "true" } };
+  SECTION( "setArgumentsUsingPlaceholderValueMap" ){
+  PlaceHolderValueMap input =
+  {
+    { "doubleArgument", "1.23"},
+    { "intArgument", "23"},
+    { "stringArgument", "Hallo_Welt"},
+    { "sizeArgument", "34"},
+    { "bool1", "0"},
+    { "bool2", "true"}};
 
-  DoubleArg autoArg1( "doubleArgument", "" );
-  IntArg autoArg2( "intArgument", "" );
-  StringArg autoArg3( "stringArgument", "" );
-  SizeArg autoArg4( "sizeArgument", "" );
-  BoolArg autoArg5( "bool1", "" );
-  BoolArg autoArg6( "bool2", "" );
+  DoubleArg autoArg1( "doubleArgument", "",0 );
+  IntArg autoArg2( "intArgument", "",0 );
+  StringArg autoArg3( "stringArgument", "","0" );
+  SizeArg autoArg4( "sizeArgument", "",0 );
+  BoolArg autoArg5( "bool1", "",0 );
+  BoolArg autoArg6( "bool2", "",0 );
 
-  BOOST_CHECK_NO_THROW( ArgumentManager::getInstance( ).setArguments( input ) );
+  CHECK_NOTHROW( ArgumentManager::getInstance( ).setArguments( input ) );
 
   double result1 = autoArg1;
   int result2 = autoArg2;
@@ -106,17 +90,11 @@ BOOST_AUTO_TEST_CASE ( setArgumentsUsingPlaceholderValueMap )
   bool result5 = autoArg5;
   bool result6 = autoArg6;
 
-  BOOST_CHECK_EQUAL( result1, 1.23 );
-  BOOST_CHECK_EQUAL( result2, 23 );
-  BOOST_CHECK_EQUAL( result3, "Hallo_Welt" );
-  BOOST_CHECK_EQUAL( result4, 34 );
-  BOOST_CHECK_EQUAL( result5, false );
-  BOOST_CHECK_EQUAL( result6, true );
+  CHECK( result1 == 1.23 );
+  CHECK( result2 == 23 );
+  CHECK( result3 == "Hallo_Welt" );
+  CHECK( result4 == 34 );
+  CHECK( result5 == false );
+  CHECK( result6 == true );
 }
-//
-BOOST_AUTO_TEST_SUITE_END() // TestsWithArgumentManagerReset
-//
-BOOST_AUTO_TEST_SUITE_END()
-
-}// namespace adhocpp
-}// namespace utilities
+}

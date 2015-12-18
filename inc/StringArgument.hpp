@@ -25,26 +25,21 @@
 // --- Internal Includes ---
 #include "AbsArgument.hpp"
 
-namespace adhocpp
-{
-namespace utilities
+namespace autoargs
 {
 
 class StringArgument : public AbsArgument
 {
 public:
   StringArgument( const std::string& placeHolder,
-                  const std::string& helpText );
-
-  StringArgument( const std::string& placeHolder,
                   const std::string& helpText,
-                  const std::string& defaultValue );
+                  const std::string& value );
 
   virtual ~StringArgument( );
 
   std::string getType( ) const;
 
-  std::string getDefaultValue( ) const;
+  std::string getValue( ) const;
 
   void setValue( std::string value );
 
@@ -52,13 +47,14 @@ public:
 
   std::string value( ) const;
 
+  std::string operator*( ) const;
+
 private:
   explicit StringArgument( const StringArgument& );
   StringArgument& operator=( const StringArgument& );
 
-  std::string myDefaultValue;
+  std::string myValue;
 };
 
-} // namespace utilities
-} // namespace adhocpp
+} // namespace autoargs
 #endif // AUTOARGS_STRINGARGUMENT_HPP_

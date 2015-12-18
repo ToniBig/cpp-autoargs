@@ -19,31 +19,16 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-// --- Internal Includes ---
-#include "../inc/DefaultInputFileReader.hpp"
+// --- Standard Includes ---
+#include <iostream>
+#include <string>
 
-// --- Catch Includes ---
-#include "catch.hpp"
-
-using namespace autoargs;
-
-
-TEST_CASE( "parse input file" )
+int main( int argc,
+          char **argv )
 {
-  PlaceHolderValueMap result;
-  std::string fileName = "defaultInputFileReaderData.in";
-
-  SECTION( "parse input file" ){
-
-  REQUIRE_NOTHROW( result = DefaultInputFileReader::parseInputFile( fileName ) );
-
-  CHECK( result.size( ) == 6 );
-  CHECK( result["doubleArgument"] == "1.23" );
-  CHECK( result["intArgument"] == "23" );
-  CHECK( result["stringArgument"] == "Hallo_Welt" );
-  CHECK( result["sizeArgument"] == "34" );
-  CHECK( result["bool1"] == "0" );
-  CHECK( result["bool2"] == "true" );
-}
-
+  std::cout << "Hello World!" << std::endl;
+  std::cout << "My name is John Doe." << std::endl;
+  std::cout << "I am 33 years old." << std::endl;
+  std::cout << "I am 1.92 m tall." << std::endl;
+  std::cout << "I like telenovelas...not!" << std::endl;
 }

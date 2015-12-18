@@ -26,9 +26,7 @@
 #include <string>
 #include <vector>
 
-namespace adhocpp
-{
-namespace utilities
+namespace autoargs
 {
 
 struct ArgumentData
@@ -57,8 +55,8 @@ inline ArgumentData makeArgument( const std::string& placeholder,
 }
 
 inline ArgumentData makeArgument( const std::string& placeholder,
-                                          const std::string& helpText,
-                                          const std::string& type )
+                                  const std::string& helpText,
+                                  const std::string& type )
 {
   ArgumentData data = { placeholder, helpText, type, { } };
 
@@ -66,15 +64,14 @@ inline ArgumentData makeArgument( const std::string& placeholder,
 }
 
 inline ArgumentData makeArgument( const std::string& placeholder,
-                                                    const std::string& helpText,
-                                                    const std::string& type,
-                                                    const std::string& defaulValue )
+                                  const std::string& helpText,
+                                  const std::string& type,
+                                  const std::string& defaulValue )
 {
   ArgumentData data = { placeholder, helpText, type, defaulValue };
 
   return data;
 }
 
-} // namespace utilities
-} // namespace adhocpp
+} // namespace autoargs
 #endif // AUTOARGS_DRIVERDATA_HPP_

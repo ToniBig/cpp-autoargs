@@ -25,26 +25,22 @@
 // --- Standard Includes ---
 #include <string>
 
-namespace adhocpp
-{
-namespace utilities
+namespace autoargs
 {
 
 class AbsArgument
 {
 public:
   AbsArgument( const std::string& placeHolder,
-               const std::string& helpText,
-               bool defaultValueState );
+               const std::string& helpText );
 
   virtual ~AbsArgument( );
 
   std::string getPlaceHolder( ) const;
   std::string getHelpText( ) const;
-  bool hasDefaultValue( ) const;
 
   virtual std::string getType( ) const = 0;
-  virtual std::string getDefaultValue( ) const = 0;
+  virtual std::string getValue( ) const = 0;
 
   virtual void setValue( std::string value ) = 0;
 
@@ -54,11 +50,7 @@ private:
 
   std::string myPlaceHolder;
   std::string myHelpText;
-
-protected:
-  bool myDefaultValueState;
 };
 
-} // namespace utilities
-} // namespace adhocpp
+} // namespace autoargs
 #endif // AUTOARGS_ABSARGUMENT_HPP_

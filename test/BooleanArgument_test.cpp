@@ -23,65 +23,38 @@
 #include "../inc/BooleanArgument.hpp"
 #include "../inc/ArgumentManager.hpp"
 
-// --- BOOST Includes ---
-#include "boost/test/unit_test.hpp"
+// --- Catch Includes ---
+#include "catch.hpp"
 
-namespace adhocpp
-{
-namespace utilities
-{
+using namespace autoargs;
 
-BOOST_AUTO_TEST_SUITE ( BooleanArgumentTest )
-
-BOOST_AUTO_TEST_SUITE ( Constructor )
-
-BOOST_AUTO_TEST_CASE ( DefaultConstructorWithOutExplicitDefault )
+TEST_CASE( "Boolean arguments" )
 {
   ArgumentManager::getInstance( ).clear( );
-  BOOST_CHECK_NO_THROW( BooleanArgument( "boolOption", "Yes or no?" ) );
-}
 
-BOOST_AUTO_TEST_CASE ( DefaultConstructorWithExplicitDefault )
-{
-  ArgumentManager::getInstance( ).clear( );
-  BOOST_CHECK_NO_THROW( BooleanArgument( "boolOption", "Yes or no?", true ) );
-}
-
-BOOST_AUTO_TEST_SUITE_END() // Constructor
-
-struct Fixture
-{
-  bool result;
-
-  ~Fixture( )
-  {
-    ArgumentManager::getInstance( ).clear( );
-  }
-};
-
-BOOST_FIXTURE_TEST_SUITE( someFunction, Fixture )
-
-BOOST_AUTO_TEST_CASE ( conversionUsingDefault )
-{
-  BooleanArgument argument( "boolOption", "Yes or no?" );
-
-  BOOST_CHECK_NO_THROW( result = argument );
-
-  BOOST_CHECK_EQUAL( result, false );
-}
-
-BOOST_AUTO_TEST_CASE ( conversionUsingNonDefault )
-{
   BooleanArgument argument( "boolOption", "Yes or no?", true );
 
-  BOOST_CHECK_NO_THROW( result = argument );
+  bool result;
 
-  BOOST_CHECK_EQUAL( result, true );
+  SECTION( "Implicit conversion" ){
+
+  CHECK_NOTHROW( result = argument );
+
+  CHECK( result == true );
 }
 
-BOOST_AUTO_TEST_SUITE_END() // someFunction
+  SECTION("conversion using value member"){
 
-BOOST_AUTO_TEST_SUITE_END() // BooleanArgumentTest
+  CHECK_NOTHROW( result = argument.value() );
 
-}// namespace utilities
-}// namespace adhocpp
+  CHECK( result == true );
+}
+
+  SECTION("conversion using dereferenciation"){
+
+  CHECK_NOTHROW( result = *argument );
+
+  CHECK( result == true );
+}
+
+}

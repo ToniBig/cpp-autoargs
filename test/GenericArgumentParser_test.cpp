@@ -24,24 +24,10 @@
 #include "../inc/ArgumentManager.hpp"
 #include "../inc/autoargs.hpp"
 
-// --- BOOST Includes ---
-#include "boost/test/unit_test.hpp"
-
-namespace adhocpp {
-namespace utilities {
+// --- Catch Includes ---
+#include "catch.hpp"
 
 using namespace autoargs;
-
-BOOST_AUTO_TEST_SUITE ( GenericTestArgumentParserTest )
-
-BOOST_AUTO_TEST_SUITE ( Constructor )
-
-BOOST_AUTO_TEST_CASE ( Constructor )
-{
-
-}
-
-BOOST_AUTO_TEST_SUITE_END() // Constructor
 
 struct Fixture
 {
@@ -51,59 +37,54 @@ struct Fixture
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE( parseCommandLine, Fixture )
-
-BOOST_AUTO_TEST_CASE ( parseCommandLine )
+TEST_CASE_METHOD( Fixture, "Parse command line" )
 {
+
+  SECTION( "parseCommandLine" ){
   ArgumentManager::getInstance( ).clear( );
 
   DoubleArg optionalArg1( "optional1", "First optional", 1.23 );
-  DoubleArg requiredArg1( "required1", "First required" );
   SizeArg optionalArg2( "optional2", "Second optional", 23 );
-  BoolArg optionalArg3( "optional3", "Third optional" );
-  StringArg optionalArg4( "optional4", "Fourth optional", "3.45" );
+  StringArg optionalArg3( "optional3", "Fourth optional", "3.45" );
 
-  int argc = 4 + 1;
+  int argc = 3 + 1;
   char arg0[] = "driver";
-  char arg1[] = "4.32";
-  char arg2[] = "--optional1=6.54";
-  char arg3[] = "--optional2=12";
-  char arg4[] = "--optional4=hello";
-  char* argv[] = { &arg0[0], &arg1[0], &arg2[0], &arg3[0], &arg4[0], NULL };
+  char arg1[] = "--optional1=6.54";
+  char arg2[] = "--optional2=12";
+  char arg3[] = "--optional3=hello";
+  char* argv[] =
+  { &arg0[0], &arg1[0], &arg2[0], &arg3[0], NULL};
 
-  BOOST_CHECK_NO_THROW( TestArgumentParser::parseCommandLine( argc, argv ) );
+  CHECK_NOTHROW( TestArgumentParser::parseCommandLine( argc, argv ) );
 
-  double result1 = requiredArg1;
-  double result2 = optionalArg1;
-  double result3 = optionalArg2;
-  bool result4 = optionalArg3;
-  std::string result5 = optionalArg4;
+  double result1 = optionalArg1;
+  size_t result2 = optionalArg2;
+  std::string result3 = optionalArg3;
 
-  BOOST_CHECK_EQUAL( result1, 4.32 );
-  BOOST_CHECK_EQUAL( result2, 6.54 );
-  BOOST_CHECK_EQUAL( result3, 12 );
-  BOOST_CHECK_EQUAL( result4, false );
-  BOOST_CHECK_EQUAL( result5, "hello" );
+  CHECK( result1 == 6.54 );
+  CHECK( result2 == 12 );
+  CHECK( result3 == "hello" );
 }
 
-BOOST_AUTO_TEST_CASE ( parseCommandLineWithInputFile )
+SECTION( "parseCommandLineWithInputFile" )
 {
   ArgumentManager::getInstance( ).clear( );
 
-  DoubleArg autoArg1( "doubleArgument", "" );
-  IntArg autoArg2( "intArgument", "" );
-  StringArg autoArg3( "stringArgument", "" );
-  SizeArg autoArg4( "sizeArgument", "" );
-  BoolArg autoArg5( "bool1", "" );
-  BoolArg autoArg6( "bool2", "" );
+  DoubleArg autoArg1( "doubleArgument", "", 0 );
+  IntArg autoArg2( "intArgument", "", 0 );
+  StringArg autoArg3( "stringArgument", "", "0" );
+  SizeArg autoArg4( "sizeArgument", "", 0 );
+  BoolArg autoArg5( "bool1", "", 0 );
+  BoolArg autoArg6( "bool2", "", 0 );
 
   int argc = 1 + 2;
   char arg0[] = "driver";
   char arg1[] = "--input";
   char arg2[] = "defaultInputFileReaderData.in";
-  char* argv[] = { &arg0[0], &arg1[0], &arg2[0], NULL };
+  char* argv[] =
+  { &arg0[0], &arg1[0], &arg2[0], NULL};
 
-  BOOST_CHECK_NO_THROW( TestArgumentParser::parseCommandLine( argc, argv ) );
+  CHECK_NOTHROW( TestArgumentParser::parseCommandLine( argc, argv ) );
 
   double result1 = autoArg1;
   int result2 = autoArg2;
@@ -112,98 +93,67 @@ BOOST_AUTO_TEST_CASE ( parseCommandLineWithInputFile )
   bool result5 = autoArg5;
   bool result6 = autoArg6;
 
-  BOOST_CHECK_EQUAL( result1, 1.23 );
-  BOOST_CHECK_EQUAL( result2, 23 );
-  BOOST_CHECK_EQUAL( result3, "Hallo_Welt" );
-  BOOST_CHECK_EQUAL( result4, 34 );
-  BOOST_CHECK_EQUAL( result5, false );
-  BOOST_CHECK_EQUAL( result6, true );
+  CHECK( result1 == 1.23 );
+  CHECK( result2 == 23 );
+  CHECK( result3 == "Hallo_Welt" );
+  CHECK( result4 == 34 );
+  CHECK( result5 == false );
+  CHECK( result6 == true );
 }
 
-BOOST_AUTO_TEST_CASE ( optionalWithoutDashFails )
+SECTION( "optionalWithoutDashFails" )
 {
   DoubleArg optionalArg1( "optional1", "First optional", 1.23 );
 
   int argc = 1 + 1;
   char arg0[] = "driver";
   char arg1[] = "optional1=6.54";
-  char* argv[] = { &arg0[0], &arg1[0], NULL };
+  char* argv[] =
+  { &arg0[0], &arg1[0], NULL};
 
   {
-    BOOST_CHECK_THROW( TestArgumentParser::parseCommandLine( argc, argv ), std::exception );
+    CHECK_THROWS_AS( TestArgumentParser::parseCommandLine( argc, argv ), std::exception );
   }
 }
 
-BOOST_AUTO_TEST_CASE ( optionalWithoutAssignmentFails )
+SECTION( "optionalWithoutAssignmentFails" )
 {
   DoubleArg optionalArg1( "optional1", "First optional", 1.23 );
 
   int argc = 1 + 1;
   char arg0[] = "driver";
   char arg1[] = "--optional1";
-  char* argv[] = { &arg0[0], &arg1[0], NULL };
+  char* argv[] =
+  { &arg0[0], &arg1[0], NULL};
 
-  BOOST_CHECK_THROW( TestArgumentParser::parseCommandLine( argc, argv ), std::exception );
+  CHECK_THROWS_AS( TestArgumentParser::parseCommandLine( argc, argv ), std::exception );
 }
 
-BOOST_AUTO_TEST_CASE ( missingRequiredArgumentsFails )
-{
-  DoubleArg requiredArg1( "required", "First required" );
-
-  int argc = 1;
-  char arg0[] = "driver";
-  char* argv[] = { &arg0[0], NULL };
-
-  BOOST_CHECK_THROW( TestArgumentParser::parseCommandLine( argc, argv ), std::exception );
-}
-
-BOOST_AUTO_TEST_CASE ( optionalInsteadOfRequiredArgumentFails )
-{
-  DoubleArg requiredArg1( "required", "First required" );
-
-  int argc = 2;
-  char arg0[] = "driver";
-  char arg1[] = "--optional1=10";
-  char* argv[] = { &arg0[0], &arg1[0], NULL };
-
-  BOOST_CHECK_THROW( TestArgumentParser::parseCommandLine( argc, argv ), std::exception );
-}
-
-BOOST_AUTO_TEST_CASE ( listArguments )
+SECTION( "listArguments" )
 {
 
   DoubleArg optionalArg1( "optional1", "First optional", 1.23 );
-  DoubleArg requiredArg1( "required1", "First required" );
   SizeArg optionalArg2( "optional2", "Second optional", 23 );
-  StringArg requiredArg2( "required2", "Second required" );
   StringArg optionalArg3( "optional3", "Third optional", "3.45" );
 
-  int argc = 5 + 1;
+  int argc = 3 + 1;
   char arg0[] = "driver";
-  char arg1[] = "4.32";
-  char arg2[] = "tino";
-  char arg3[] = "--optional1=6.54";
-  char arg4[] = "--optional2=12";
-  char arg5[] = "--optional3=hello";
-  char* argv[] = { &arg0[0], &arg1[0], &arg2[0], &arg3[0], &arg4[0], &arg5[0], NULL };
+  char arg1[] = "--optional1=6.54";
+  char arg2[] = "--optional2=12";
+  char arg3[] = "--optional3=hello";
+  char* argv[] =
+  { &arg0[0], &arg1[0], &arg2[0], &arg3[0], NULL};
 
-  BOOST_CHECK_NO_THROW( TestArgumentParser::parseCommandLine( argc, argv ) );
+  CHECK_NOTHROW( TestArgumentParser::parseCommandLine( argc, argv ) );
 
   std::string result;
   std::string reference;
-  reference += "                     required1 : 4.320000000000000e+00          # (double) First required\n";
-  reference += "                     required2 : tino                           # (string) Second required\n";
   reference += "                     optional1 : 6.540000000000000e+00          # (double) First optional\n";
   reference += "                     optional2 : 12                             # (size_t) Second optional\n";
   reference += "                     optional3 : hello                          # (string) Third optional\n";
 
-  BOOST_CHECK_NO_THROW( result = TestArgumentParser::listArguments( ) );
-  BOOST_CHECK_EQUAL( result, reference );
+  CHECK_NOTHROW( result = TestArgumentParser::listArguments( ) );
+  CHECK( result == reference );
 }
 
-BOOST_AUTO_TEST_SUITE_END() // parseCommandLine
-
-BOOST_AUTO_TEST_SUITE_END() // GenericTestArgumentParserTest
-
-}// namespace utilities
-}// namespace adhocpp
+}

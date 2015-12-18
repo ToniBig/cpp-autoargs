@@ -32,19 +32,16 @@
 
 namespace autoargs
 {
-typedef adhocpp::utilities::BooleanArgument BoolArg;
-typedef adhocpp::utilities::StringArgument StringArg;
-typedef adhocpp::utilities::GenericNumericArgument<double> DoubleArg;
-typedef adhocpp::utilities::GenericNumericArgument<float> FloatArg;
-typedef adhocpp::utilities::GenericNumericArgument<short> ShortArg;
-typedef adhocpp::utilities::GenericNumericArgument<int> IntArg;
-typedef adhocpp::utilities::GenericNumericArgument<size_t> SizeArg;
+typedef BooleanArgument BoolArg;
+typedef StringArgument StringArg;
+typedef GenericNumericArgument<double> DoubleArg;
+typedef GenericNumericArgument<float> FloatArg;
+typedef GenericNumericArgument<short> ShortArg;
+typedef GenericNumericArgument<int> IntArg;
+typedef GenericNumericArgument<size_t> SizeArg;
 
-typedef adhocpp::utilities::GenericArgumentParser<adhocpp::utilities::DefaultHelpMessageCreator,
-    adhocpp::utilities::CoutAndExitPolicy, adhocpp::utilities::DefaultInputFileReader> ArgumentParser;
+typedef GenericArgumentParser<DefaultHelpMessageCreator, CoutAndExitPolicy, DefaultInputFileReader> ArgumentParser;
+typedef GenericArgumentParser<DefaultHelpMessageCreator, ExceptionPolicy, DefaultInputFileReader> TestArgumentParser;
 
-typedef adhocpp::utilities::GenericArgumentParser<adhocpp::utilities::DefaultHelpMessageCreator,
-    adhocpp::utilities::AdhocppExceptionPolicy, adhocpp::utilities::DefaultInputFileReader> TestArgumentParser;
-}  // namespace autoargs
-
+} // namespace autoargs
 #endif // AUTOARGS_AUTOARGS_HPP_

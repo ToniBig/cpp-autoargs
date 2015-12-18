@@ -19,67 +19,51 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+// --- Internal Includes ---
+#include "../inc/AutoArgsException.hpp"
 
-//// --- Internal Includes ---
-//#include "../inc/AutoArgsException.hpp"
-//
-//// --- UnitTest Includes ---
-//#include "utilities/inc/unittest.hpp"
-//
-//namespace adhocpp
-//{
-//namespace utilities
-//{
-//
-//// --- Standard Includes ---
-//#include <string>
-//#include <iostream>
-//#include <sstream>
-//
-//BOOST_AUTO_TEST_SUITE ( AutoArgsExceptionTest )
-//
-//BOOST_AUTO_TEST_SUITE ( Constructor )
-//
-//BOOST_AUTO_TEST_CASE ( DefaultCalllingWhat )
-//{
-//  std::stringstream out;
-//  std::streambuf *coutbuf = std::cout.rdbuf( ); //save old buf
-//  std::cout.rdbuf( out.rdbuf( ) ); //redirect std::cout to out.txt!
-//
-//  {
-//    AutoArgsException error( "You did something wrong" );
-//
-//    std::string errorMessage;
-//
-//    BOOST_CHECK_NO_THROW( errorMessage = error.what( ) )
-//
-//    BOOST_CHECK_EQUAL( errorMessage, "You did something wrong" );
-//  }
-//
-//  BOOST_CHECK_EQUAL( out.str( ), "" );
-//
-//  std::cout.rdbuf( coutbuf ); //reset to standard output again
-//}
-//
-//BOOST_AUTO_TEST_CASE ( DefaultNotCalllingWhat )
-//{
-//  std::stringstream out;
-//  std::streambuf *coutbuf = std::cout.rdbuf( ); //save old buf
-//  std::cout.rdbuf( out.rdbuf( ) ); //redirect std::cout to out.txt!
-//
-//  {
-//    AutoArgsException error( "You did something wrong" );
-//  }
-////  std::string errorMessage;
-//
-//  BOOST_CHECK_EQUAL( out.str( ), "" );
-//
-//  std::cout.rdbuf( coutbuf ); //reset to standard output again
-//}
-//
-//BOOST_AUTO_TEST_SUITE_END()
-//
-//BOOST_AUTO_TEST_SUITE_END()
-//
-//}// namespace utilities
-//}// namespace adhocpp
+// --- Catch Includes ---
+#include "catch.hpp"
+
+// --- Standard Includes ---
+#include <string>
+#include <iostream>
+#include <sstream>
+
+using namespace autoargs;
+
+TEST_CASE ( "Default callling what" )
+{
+  std::stringstream out;
+  std::streambuf *coutbuf = std::cout.rdbuf( ); //save old buf
+  std::cout.rdbuf( out.rdbuf( ) ); //redirect std::cout to out.txt!
+
+  {
+    AutoArgsException error( "You did something wrong" );
+
+    std::string errorMessage;
+
+    CHECK_NOTHROW( errorMessage = error.what( ) );
+
+    CHECK( errorMessage == "You did something wrong" );
+  }
+
+  CHECK( out.str( ) == "" );
+
+  std::cout.rdbuf( coutbuf ); //reset to standard output again
+}
+
+TEST_CASE ( "Default not callling what" )
+{
+  std::stringstream out;
+  std::streambuf *coutbuf = std::cout.rdbuf( ); //save old buf
+  std::cout.rdbuf( out.rdbuf( ) ); //redirect std::cout to out.txt!
+
+  {
+    AutoArgsException error( "You did something wrong" );
+  }
+
+  CHECK( out.str( ) == "Error: You did something wrong\n" );
+
+  std::cout.rdbuf( coutbuf ); //reset to standard output again
+}

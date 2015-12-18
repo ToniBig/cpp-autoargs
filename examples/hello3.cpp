@@ -20,30 +20,28 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // --- Internal Includes ---
-#include "../inc/DefaultInputFileReader.hpp"
+#include "../inc/autoargs.hpp"
 
-// --- Catch Includes ---
-#include "catch.hpp"
+// --- Standard Includes ---
+#include <iostream>
+#include <string>
 
 using namespace autoargs;
 
-
-TEST_CASE( "parse input file" )
+int main( int argc,
+          char **argv )
 {
-  PlaceHolderValueMap result;
-  std::string fileName = "defaultInputFileReaderData.in";
+  StringArg first( "first", "The first name", "John" );
+  StringArg last( "last", "The last name", "Doe" );
+  SizeArg age( "age", "The (true?) age", 33 );
+  DoubleArg height( "height", "How tall?", 1.92 );
+  BoolArg like( "like", "You like not-jokes?", true );
 
-  SECTION( "parse input file" ){
+  ArgumentParser::parseCommandLine( argc, argv );
 
-  REQUIRE_NOTHROW( result = DefaultInputFileReader::parseInputFile( fileName ) );
-
-  CHECK( result.size( ) == 6 );
-  CHECK( result["doubleArgument"] == "1.23" );
-  CHECK( result["intArgument"] == "23" );
-  CHECK( result["stringArgument"] == "Hallo_Welt" );
-  CHECK( result["sizeArgument"] == "34" );
-  CHECK( result["bool1"] == "0" );
-  CHECK( result["bool2"] == "true" );
-}
-
+  std::cout << "Hello World!" << std::endl;
+  std::cout << "My name is " << *first << " " << last.value( ) << "." << std::endl;
+  std::cout << "I am " << age << " years old." << std::endl;
+  std::cout << "I am " << height << " m tall." << std::endl;
+  std::cout << "I like telenovelas." << ( like ? "" : "..not!" ) << std::endl;
 }

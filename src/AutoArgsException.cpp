@@ -25,9 +25,7 @@
 // --- Standard Includes ---
 #include <iostream>
 
-namespace adhocpp
-{
-namespace utilities
+namespace autoargs
 {
 
 AutoArgsException::AutoArgsException( const std::string& message ) :
@@ -57,5 +55,5 @@ const char* AutoArgsException::what( ) const throw ( )
   return message.c_str( );
 }
 
-} // namespace utilities
-} // namespace adhocpp
+} // namespace autoargs
+

@@ -22,17 +22,12 @@
 // --- Internal Includes ---
 #include "../inc/DefaultHelpMessageCreator.hpp"
 
-// --- BOOST Includes ---
-#include "boost/test/unit_test.hpp"
+// --- Catch Includes ---
+#include "catch.hpp"
 
-namespace adhocpp
-{
-namespace utilities
-{
+using namespace autoargs;
 
-BOOST_AUTO_TEST_SUITE ( DefaultHelpMessageCreatorTest )
-
-BOOST_AUTO_TEST_CASE ( getHelpDescription )
+TEST_CASE ( "get help description" )
 {
 
   DriverData data;
@@ -40,9 +35,6 @@ BOOST_AUTO_TEST_CASE ( getHelpDescription )
   data.driverName = "myFancyApp";
 
   data.description = "Compute something";
-
-  data.requiredArguments.push_back( makeArgument( "required1", "First required", "double" ) );
-  data.requiredArguments.push_back( makeArgument( "requiredTwo", "Second required", "double" ) );
 
   data.optionalArguments.push_back( makeArgument( "optional1", "First optional", "double", "1.23" ) );
   data.optionalArguments.push_back( makeArgument( "optional2", "Second optional", "size_t", "23" ) );
@@ -53,19 +45,13 @@ BOOST_AUTO_TEST_CASE ( getHelpDescription )
   data.builtInArguments.push_back( makeArgument( "version", "print the version of AdhoC++ being used" ) );
 
   std::string description;
-  std::string reference =
-      "Usage: \n"
-      "myFancyApp required1 requiredTwo [--options]\n"
+  std::string reference = "Usage: \n"
+      "myFancyApp [--options]\n"
       "myFancyApp --input inputFileName\n"
       "\n"
       "Purpose: \n"
       "\n"
       "Compute something\n"
-      "\n"
-      "Required arguments:\n"
-      "\n"
-      "\trequired1                 : double                           : First required\n"
-      "\trequiredTwo               : double                           : Second required\n"
       "\n"
       "Optional arguments:\n"
       "\n"
@@ -79,12 +65,8 @@ BOOST_AUTO_TEST_CASE ( getHelpDescription )
       "\t--help                    : print this help message\n"
       "\t--version                 : print the version of AdhoC++ being used\n";
 
-  BOOST_CHECK_NO_THROW( description = DefaultHelpMessageCreator::getHelpMessage( data ) );
+  CHECK_NOTHROW( description = DefaultHelpMessageCreator::getHelpMessage( data ) );
 
-  BOOST_CHECK_EQUAL( description, reference );
+  CHECK( description == reference );
 }
 
-BOOST_AUTO_TEST_SUITE_END() // DefaultHelpMessageCreatorTest
-
-}// namespace utilities
-}// namespace adhocpp

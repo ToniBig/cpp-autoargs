@@ -27,9 +27,7 @@
 #include <memory>
 #include <string>
 
-namespace adhocpp
-{
-namespace utilities
+namespace autoargs
 {
 
 class AutoArgsException : public std::exception
@@ -47,6 +45,5 @@ private:
   std::unique_ptr<bool> whatNotCalled;
 };
 
-} // namespace utilities
-} // namespace adhocpp
+} // namespace autoargs
 #endif // AUTOARGS_AUTOARGSEXCEPTION_HPP_

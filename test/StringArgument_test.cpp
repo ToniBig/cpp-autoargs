@@ -23,63 +23,27 @@
 #include "../inc/StringArgument.hpp"
 #include "../inc/ArgumentManager.hpp"
 
-// --- BOOST Includes ---
-#include "boost/test/unit_test.hpp"
+// --- Catch Includes ---
+#include "catch.hpp"
 
-namespace adhocpp
-{
-namespace utilities
-{
+using namespace autoargs;
 
-BOOST_AUTO_TEST_SUITE ( StringArgumentTest )
-
-BOOST_AUTO_TEST_SUITE ( Constructor )
-
-BOOST_AUTO_TEST_CASE ( DefaultConstructorWithOutExplicitDefault )
+TEST_CASE( "String Argument" )
 {
   ArgumentManager::getInstance( ).clear( );
-  BOOST_CHECK_NO_THROW( StringArgument( "stringOption", "Yes or no?" ) );
-}
-
-BOOST_AUTO_TEST_CASE ( DefaultConstructorWithExplicitDefault )
-{
-  ArgumentManager::getInstance( ).clear( );
-  BOOST_CHECK_NO_THROW( StringArgument( "stringOption", "Yes or no?", "Hello World" ) );
-}
-
-BOOST_AUTO_TEST_SUITE_END() // Constructor
-
-struct Fixture
-{
+  StringArgument argument( "stringOption", "Yes or no?", "No" );
   std::string result;
 
-  ~Fixture( )
-  {
-    ArgumentManager::getInstance( ).clear( );
-  }
-};
+  SECTION( "Conversion" ){
 
-BOOST_FIXTURE_TEST_SUITE( someFunction, Fixture )
+  CHECK_NOTHROW( result = argument );
+  CHECK( result == "No" );
 
-BOOST_AUTO_TEST_CASE ( conversionUsingDefault )
-{
-  StringArgument argument( "stringOption", "Yes or no?" );
+  CHECK_NOTHROW( result = argument.value() );
+  CHECK( result == "No" );
 
-  BOOST_CHECK_THROW( result = argument, std::runtime_error );
+  CHECK_NOTHROW( result = *argument );
+  CHECK( result == "No" );
 }
 
-BOOST_AUTO_TEST_CASE ( conversionUsingNonDefault )
-{
-  StringArgument argument( "stringOption", "Yes or no?", "No" );
-
-  BOOST_CHECK_NO_THROW( result = argument );
-
-  BOOST_CHECK_EQUAL( result, "No" );
 }
-
-BOOST_AUTO_TEST_SUITE_END() // someFunction
-
-BOOST_AUTO_TEST_SUITE_END() // StringArgumentTest
-
-}// namespace utilities
-}// namespace adhocpp

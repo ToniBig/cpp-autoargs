@@ -25,9 +25,7 @@
 #include <stdexcept>
 #include <type_traits>
 
-namespace adhocpp
-{
-namespace utilities
+namespace autoargs
 {
 
 template<typename T>
@@ -65,17 +63,10 @@ struct TypeToStringHelper
 
 template<typename T>
 inline GenericNumericArgument<T>::GenericNumericArgument( const std::string& placeHolder,
-                                                          const std::string& helpText ) :
-        AbsArgument( placeHolder, helpText, false )
-{
-}
-
-template<typename T>
-inline GenericNumericArgument<T>::GenericNumericArgument( const std::string& placeHolder,
                                                           const std::string& helpText,
                                                           T defaultValue ) :
-        AbsArgument( placeHolder, helpText, true ),
-        myDefaultValue( defaultValue )
+        AbsArgument( placeHolder, helpText ),
+        myValue( defaultValue )
 {
 }
 
@@ -91,17 +82,17 @@ inline std::string GenericNumericArgument<T>::getType( ) const
 }
 
 template<typename T>
-inline std::string GenericNumericArgument<T>::getDefaultValue( ) const
+inline std::string GenericNumericArgument<T>::getValue( ) const
 {
-  if ( std::is_floating_point<T>::value )
+  if ( std::is_floating_point < T > ::value )
   {
     std::stringstream stream;
-    stream << std::setprecision( 15 ) << std::scientific << myDefaultValue;
+    stream << std::setprecision( 15 ) << std::scientific << myValue;
     return stream.str( );
   }
   else
   {
-    return std::to_string( myDefaultValue );
+    return std::to_string( myValue );
   }
 }
 
@@ -111,9 +102,7 @@ inline void GenericNumericArgument<T>::setValue( std::string value )
   std::istringstream inputStream;
   inputStream.str( value );
 
-  inputStream >> myDefaultValue;
-
-  myDefaultValueState = true;
+  inputStream >> myValue;
 }
 
 template<typename T>
@@ -125,21 +114,13 @@ inline GenericNumericArgument<T>::operator T( ) const
 template<typename T>
 inline T GenericNumericArgument<T>::value( ) const
 {
-  if ( hasDefaultValue( ) )
-  {
-    return myDefaultValue;
-  }
-  else
-  {
-    throw std::runtime_error( "No default value specified for: " + this->getPlaceHolder( ) );
-  }
+  return myValue;
 }
 
 template<typename T>
-inline T adhocpp::utilities::GenericNumericArgument<T>::operator *( ) const
+inline T GenericNumericArgument<T>::operator *( ) const
 {
   return this->value( );
 }
 
-} // namespace utilities
-} // namespace adhocpp
+} // namespace autoargs

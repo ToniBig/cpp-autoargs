@@ -23,19 +23,15 @@
 #include "../inc/AbsArgument.hpp"
 #include "../inc/ArgumentManager.hpp"
 
-namespace adhocpp
-{
-namespace utilities
+namespace autoargs
 {
 
 AbsArgument::AbsArgument( const std::string& placeHolder,
-                          const std::string& helpText,
-                          bool defaultValueState ) :
+                          const std::string& helpText ) :
         myPlaceHolder( placeHolder ),
-        myHelpText( helpText ),
-        myDefaultValueState( defaultValueState )
+        myHelpText( helpText )
 {
-    ArgumentManager::getInstance( ).registerArgument( *this );
+  ArgumentManager::getInstance( ).registerArgument( *this );
 }
 
 AbsArgument::~AbsArgument( )
@@ -51,18 +47,13 @@ AbsArgument::~AbsArgument( )
 
 std::string AbsArgument::getPlaceHolder( ) const
 {
-    return myPlaceHolder;
+  return myPlaceHolder;
 }
 
 std::string AbsArgument::getHelpText( ) const
 {
-    return myHelpText;
+  return myHelpText;
 }
 
-bool AbsArgument::hasDefaultValue( ) const
-{
-    return myDefaultValueState;
-}
+} // namespace autoargs
 
-} // namespace utilities
-} // namespace adhocpp

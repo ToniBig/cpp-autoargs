@@ -23,71 +23,101 @@
 #include "../inc/GenericNumericArgument.hpp"
 #include "../inc/ArgumentManager.hpp"
 
-// --- BOOST Includes ---
-#include "boost/test/unit_test.hpp"
+// --- Catch Includes ---
+#include "catch.hpp"
 
-// --- Boost Includes ---
-#include <boost/test/test_case_template.hpp>
-#include <boost/mpl/list.hpp>
+using namespace autoargs;
 
-typedef boost::mpl::list<int,short,double,float,size_t> test_types;
-
-namespace adhocpp
+TEST_CASE( "GenericNumericArgument: Default constructor with explicit default, int" )
 {
-namespace utilities
-{
-
-BOOST_AUTO_TEST_SUITE ( GenericNumericArgumentTest )
-
-BOOST_AUTO_TEST_SUITE ( Constructor )
-
-BOOST_AUTO_TEST_CASE_TEMPLATE( DefaultConstructorWithOutExplicitDefault, T, test_types ){
-ArgumentManager::getInstance( ).clear( );
-BOOST_CHECK_NO_THROW( GenericNumericArgument<T>( "numericOption", "What?" ) );
+  ArgumentManager::getInstance( ).clear( );
+  CHECK_NOTHROW( GenericNumericArgument<int>( "numericOption", "What?", 1 ) );
 }
 
-BOOST_AUTO_TEST_CASE_TEMPLATE( DefaultConstructorWithExplicitDefault, T, test_types ){
-ArgumentManager::getInstance( ).clear( );
-BOOST_CHECK_NO_THROW( GenericNumericArgument<T>( "numericOption", "What?", 1 ) );
+TEST_CASE( "GenericNumericArgument: Default constructor with explicit default, short" )
+{
+  ArgumentManager::getInstance( ).clear( );
+  CHECK_NOTHROW( GenericNumericArgument<short>( "numericOption", "What?", 1 ) );
 }
 
-BOOST_AUTO_TEST_SUITE_END() // Constructor
-
-struct Fixture
+TEST_CASE( "GenericNumericArgument: Default constructor with explicit default, double" )
 {
-  ~Fixture( )
-  {
-    ArgumentManager::getInstance( ).clear( );
-  }
-};
+  ArgumentManager::getInstance( ).clear( );
+  CHECK_NOTHROW( GenericNumericArgument<double>( "numericOption", "What?", 1 ) );
+}
+
+TEST_CASE( "GenericNumericArgument: Default constructor with explicit default, float" )
+{
+  ArgumentManager::getInstance( ).clear( );
+  CHECK_NOTHROW( GenericNumericArgument<float>( "numericOption", "What?", 1 ) );
+}
+
+TEST_CASE( "GenericNumericArgument: Default constructor with explicit default, size_t" )
+{
+  ArgumentManager::getInstance( ).clear( );
+  CHECK_NOTHROW( GenericNumericArgument<size_t>( "numericOption", "What?", 1 ) );
+}
 
 #define UNUSED(expr) do { (void)(expr); } while (0)
 
-BOOST_FIXTURE_TEST_SUITE( someFunction, Fixture )
+TEST_CASE( "Generic Argument" )
+{
+  ArgumentManager::getInstance( ).clear( );
 
-BOOST_AUTO_TEST_CASE_TEMPLATE( conversionUsingDefault, T, test_types ){
-GenericNumericArgument<T> argument( "numericOption", "Yes or no?" );
+  SECTION( "conversion using non default int" ){
+  GenericNumericArgument<int> argument( "numericOption", "Yes or no?", 2 );
 
-T result;
+  int result;
+  CHECK_NOTHROW( result = argument );
+  CHECK( result == 2 );
 
-UNUSED( result );
+  CHECK_NOTHROW( result = argument.value() );
+  CHECK( result == 2 );
 
-BOOST_CHECK_THROW( result = argument, std::runtime_error );
+  CHECK_NOTHROW( result = *argument );
+  CHECK( result == 2 );
 }
 
-BOOST_AUTO_TEST_CASE_TEMPLATE( conversionUsingNonDefault, T, test_types ){
-GenericNumericArgument<T> argument( "numericOption", "Yes or no?", 2 );
+  SECTION( "conversion using non default float" ){
+  GenericNumericArgument<float> argument( "numericOption", "Yes or no?", 2 );
 
-T result;
+  float result;
+  CHECK_NOTHROW( result = argument );
+  CHECK( result == 2 );
 
-BOOST_CHECK_NO_THROW( result = argument );
+  CHECK_NOTHROW( result = argument.value() );
+  CHECK( result == 2 );
 
-BOOST_CHECK_EQUAL( result, 2 );
+  CHECK_NOTHROW( result = *argument );
+  CHECK( result == 2 );
 }
 
-BOOST_AUTO_TEST_SUITE_END() // someFunction
+  SECTION( "conversion using non default double" ){
+  GenericNumericArgument<double> argument( "numericOption", "Yes or no?", 2 );
 
-BOOST_AUTO_TEST_SUITE_END() // GenericNumericArgumentTest
+  double result;
+  CHECK_NOTHROW( result = argument );
+  CHECK( result == 2 );
 
-}// namespace utilities
-}// namespace adhocpp
+  CHECK_NOTHROW( result = argument.value() );
+  CHECK( result == 2 );
+
+  CHECK_NOTHROW( result = *argument );
+  CHECK( result == 2 );
+}
+
+  SECTION( "conversion using non default size_t" ){
+  GenericNumericArgument<size_t> argument( "numericOption", "Yes or no?", 2 );
+
+  size_t result;
+  CHECK_NOTHROW( result = argument );
+  CHECK( result == 2 );
+
+  CHECK_NOTHROW( result = argument.value() );
+  CHECK( result == 2 );
+
+  CHECK_NOTHROW( result = *argument );
+  CHECK( result == 2 );
+}
+
+}
