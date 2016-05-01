@@ -22,20 +22,16 @@
 // --- Internal Includes ---
 #include "../inc/autoargs.hpp"
 
-// --- Standard Includes ---
-#include <iostream>
-#include <string>
-
 using namespace autoargs;
 
 int main( int argc,
           char **argv )
 {
-  StringArg first( "first", "The first name", "John" );
-  StringArg last( "last", "The last name", "Doe" );
-  SizeArg age( "age", "The (true?) age", 33 );
-  DoubleArg height( "height", "How tall?", 1.92 );
-  BoolArg like( "like", "You like not-jokes?", true );
+  StringArg first { "first", "The first name", "John" };
+  StringArg last { "last", "The last name", "Doe" };
+  SizeArg age { "age", "The (true?) age", 33 };
+  DoubleArg height { "height", "How tall?", 1.92 };
+  BoolArg like { "like", "You like not-jokes?", true };
 
   ArgumentParser::parseCommandLine( argc, argv );
 
