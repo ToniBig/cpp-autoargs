@@ -3,10 +3,7 @@
 A simple command line argument parser for programs written in C++.
 
 
-[![Build Status](https://travis-ci.org/ToniBig/cpp-autoargs.svg?branch=master)](https://travis-ci.org/ToniBig/cpp-autoargs) Master
-
-[![Build Status](https://travis-ci.org/ToniBig/cpp-autoargs.svg?branch=development)](https://travis-ci.org/ToniBig/cpp-autoargs) Development
-
+[![Build Status](https://travis-ci.org/ToniBig/cpp-autoargs.svg?branch=master)](https://travis-ci.org/ToniBig/cpp-autoargs) Travis CI
 
 ## Features
 
@@ -94,8 +91,8 @@ int main( int argc,
   std::cout << "I like telenovelas." << ( like ? "" : "..not!" ) << std::endl;
 }
 ```
-Additionally, we need to parse the command line after all the arguments have been initialized. Note, that the arguments can be directly used in place of the previous varibles. Should a conversion not take place automatically (the compiler will tell you), you can also convert the argument explicitly by calling the `value()` member function on the argument.
-Now if the driver (`examples/hello3`) is called with the argument `--help` the automatically created documentation is printed.
+Additionally, the command line needs to be parsed (`parseCommandLine( argc, argv )`) after all the arguments have been initialized. Note, that the arguments can be used directly in place of the previous variables. If an automatic conversion fails (the compiler will tell you), the argument can be converted explicitly by calling the `value()` member function on the argument.
+Now, if the driver (`examples/hello3`) is called with the argument `--help`, the documentation is printed, which has been created automatically.
 ```
 $ ./hello3 --help
 Usage: 
@@ -116,8 +113,41 @@ Built-In arguments:
 	--input                   : Process an input file
 
 ```
-
+This driver can now be invoked with different argument values. Note the the order of arguments does not matter.
+```
+$ ./hello3 --last=Einstein --first=Albert --like=false
+Hello World!
+My name is Albert Einstein.
+I am 33 years old.
+I am 1.92 m tall.
+I like telenovelas...not!
+```
+Also, every time the driver is run, an input file `.input.in` is created which contains the latest run configuration. Here is how it would look for the last run
+```
+$ cat .input.in 
+# Input file for driver: ./hello3
+# 
+                           age : 33                             # (size_t) The (true?) age
+                         first : Albert                         # (string) The first name
+                        height : 1.920000000000000e+00          # (double) How tall?
+                          last : Einstein                       # (string) The last name
+                          like : false                          # (bool) You like not-jokes?
+```
+The grammar for this file is simple:
+* Placeholders and default values are delimited by a colon `:`
+* There may be only one placeholder value pair per line.
+* Comments begin with a `#` and last until the end of a line.
+The input file can be renamed and/or modified or you can write your own. To use the input file just invoke the driver with the `--input` argument
+```
+d$ ./hello3 --input .input.in 
+Hello World!
+My name is Albert Einstein.
+I am 33 years old.
+I am 1.92 m tall.
+I like telenovelas...not!
+```
 
 ## Todos
 
 * Add more documentation
+* Test on windows (set up CI)
