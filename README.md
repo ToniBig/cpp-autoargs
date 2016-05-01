@@ -19,7 +19,7 @@ During my PhD I was running a lot of non-linear simulations using C++. This mean
 
 ## Setting up
 
-Currently you will have to compile the library and link it to your driver. The library can be build using CMake. I plan to add a (single) header only version in the future. That might not be the right answer for everyone (compile times <> template instantiations).
+Currently you will have to compile the library and link it to your driver. The library can be build using CMake. I plan to add a (single) header only version in the future. That might not be the right answer for everyone (compile times vs. template instantiations).
 
 ## Usage
 
