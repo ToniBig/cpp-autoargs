@@ -92,7 +92,7 @@ int main( int argc,
   std::cout << "I like telenovelas." << ( like ? "" : "..not!" ) << std::endl;
 }
 ```
-Additionally, the command line needs to be parsed (`parseCommandLine( argc, argv )`) after all the arguments have been initialized. Note, that the arguments can be used directly in place of the previous variables. If an automatic conversion fails (the compiler will tell you), the argument can be converted explicitly by calling the `value()` member function on the argument.
+Additionally, the command line needs to be parsed (`parseCommandLine( argc, argv )`) after all the arguments have been initialized. Note, that the arguments can be used directly in place of the previous variables. If an automatic conversion fails (the compiler will tell you), the argument can be converted explicitly by calling the `value()` member function or the overloaded `operator*` on the argument.
 Now, if the driver (`examples/hello3`) is called with the argument `--help`, the documentation is printed, which has been created automatically.
 ```
 $ ./hello3 --help
