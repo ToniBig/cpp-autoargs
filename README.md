@@ -140,7 +140,7 @@ The grammar for this file is simple:
 * Comments begin with a `#` and last until the end of a line.
 The input file can be renamed and/or modified or you can write your own. To use the input file just invoke the driver with the `--input` argument
 ```
-d$ ./hello3 --input .input.in 
+$ ./hello3 --input .input.in 
 Hello World!
 My name is Albert Einstein.
 I am 33 years old.
