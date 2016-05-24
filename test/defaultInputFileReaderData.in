@@ -3,4 +3,4 @@
  stringArgument : Hallo_Welt 	# A string valu
  sizeArgument 	: 34 			# A size type value
  bool1 			: 0 			# A boolean value
- bool2 			: true 			# Another boolean value
+ bool2 			: TrUe 			# Another boolean value

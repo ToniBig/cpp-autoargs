@@ -20,9 +20,7 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // --- Internal Includes ---
-#include "../inc/GenericArgumentParser.hpp"
-#include "../inc/ArgumentManager.hpp"
-#include "../inc/autoargs.hpp"
+#include "autoargs.hpp"
 
 // --- Catch Includes ---
 #include "catch.hpp"
@@ -33,7 +31,7 @@ struct Fixture
 {
   ~Fixture( )
   {
-    ArgumentManager::getInstance( ).clear( );
+    ArgumentManager::clear( );
   }
 };
 
@@ -41,7 +39,7 @@ TEST_CASE_METHOD( Fixture, "Parse command line" )
 {
 
   SECTION( "parseCommandLine" ){
-  ArgumentManager::getInstance( ).clear( );
+  ArgumentManager::clear( );
 
   DoubleArg optionalArg1( "optional1", "First optional", 1.23 );
   SizeArg optionalArg2( "optional2", "Second optional", 23 );
@@ -68,7 +66,7 @@ TEST_CASE_METHOD( Fixture, "Parse command line" )
 
 SECTION( "parseCommandLineWithInputFile" )
 {
-  ArgumentManager::getInstance( ).clear( );
+  ArgumentManager::clear( );
 
   DoubleArg autoArg1( "doubleArgument", "", 0 );
   IntArg autoArg2( "intArgument", "", 0 );
@@ -149,7 +147,7 @@ SECTION( "listArguments" )
   std::string result;
   std::string reference;
   reference += "                     optional1 : 6.540000000000000e+00          # (double) First optional\n";
-  reference += "                     optional2 : 12                             # (size_t) Second optional\n";
+  reference += "                     optional2 : 12                             # (unsigned long) Second optional\n";
   reference += "                     optional3 : hello                          # (string) Third optional\n";
 
   CHECK_NOTHROW( result = TestArgumentParser::listArguments( ) );

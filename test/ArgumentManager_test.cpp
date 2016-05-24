@@ -20,8 +20,7 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // --- Internal Includes ---
-#include "../inc/ArgumentManager.hpp"
-#include "../inc/autoargs.hpp"
+#include "autoargs.hpp"
 
 // --- Catch Includes ---
 #include "catch.hpp"
@@ -32,28 +31,23 @@
 
 using namespace autoargs;
 
-TEST_CASE ( "getInstance" )
-{
-  CHECK_NOTHROW( ArgumentManager::getInstance( ) );
-}
-
 TEST_CASE( "Tests with argument manager reset" )
 {
-  ArgumentManager::getInstance( ).clear( );
+  ArgumentManager::clear( );
 
   SECTION( "registerArgument" ){
   DoubleArg optionalArg1( "value1", "A value", 1.23 );
   DoubleArg optionalArg2( "value2", "A value", 1.23 );
 
-  CHECK( ArgumentManager::getInstance( ).getNumberOfArguments( ) == 2 );
+  CHECK( ArgumentManager::getNumberOfArguments( ) == 2 );
 }
 
   SECTION( "registerArgumentsFails" ){
   DoubleArg optionalArg1( "value1", "A value", 1.23 );
   DoubleArg optionalArg2( "value2", "A value", 1.23 );
 
-  CHECK_THROWS_AS( ArgumentManager::getInstance( ).registerArgument( optionalArg1 ), std::runtime_error );
-  CHECK_THROWS_AS( ArgumentManager::getInstance( ).registerArgument( optionalArg2 ), std::runtime_error );
+  CHECK_THROWS_AS( ArgumentManager::registerArgument( optionalArg1 ), AutoArgsException );
+  CHECK_THROWS_AS( ArgumentManager::registerArgument( optionalArg2 ), AutoArgsException );
 }
 
   SECTION( "getNumberOfArguments" ){
@@ -61,7 +55,7 @@ TEST_CASE( "Tests with argument manager reset" )
   SizeArg optionalArg2( "optional2", "Second optional", 23 );
   StringArg optionalArg3( "optional3", "Third optional", "3.45" );
 
-  CHECK( ArgumentManager::getInstance( ).getNumberOfArguments( ) == 3 );
+  CHECK( ArgumentManager::getNumberOfArguments( ) == 3 );
 }
 
   SECTION( "setArgumentsUsingPlaceholderValueMap" ){
@@ -81,7 +75,7 @@ TEST_CASE( "Tests with argument manager reset" )
   BoolArg autoArg5( "bool1", "",0 );
   BoolArg autoArg6( "bool2", "",0 );
 
-  CHECK_NOTHROW( ArgumentManager::getInstance( ).setArguments( input ) );
+  CHECK_NOTHROW( ArgumentManager::setArguments( input ) );
 
   double result1 = autoArg1;
   int result2 = autoArg2;

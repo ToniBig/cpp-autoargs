@@ -20,52 +20,51 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // --- Internal Includes ---
-#include "../inc/GenericNumericArgument.hpp"
-#include "../inc/ArgumentManager.hpp"
+#include "autoargs.hpp"
 
 // --- Catch Includes ---
 #include "catch.hpp"
 
 using namespace autoargs;
 
-TEST_CASE( "GenericNumericArgument: Default constructor with explicit default, int" )
+TEST_CASE( "GenericArgument: Default constructor with explicit default, int" )
 {
-  ArgumentManager::getInstance( ).clear( );
-  CHECK_NOTHROW( GenericNumericArgument<int>( "numericOption", "What?", 1 ) );
+  ArgumentManager::clear( );
+  CHECK_NOTHROW( GenericArgument<int>( "numericOption", "What?", 1 ) );
 }
 
-TEST_CASE( "GenericNumericArgument: Default constructor with explicit default, short" )
+TEST_CASE( "GenericArgument: Default constructor with explicit default, short" )
 {
-  ArgumentManager::getInstance( ).clear( );
-  CHECK_NOTHROW( GenericNumericArgument<short>( "numericOption", "What?", 1 ) );
+  ArgumentManager::clear( );
+  CHECK_NOTHROW( GenericArgument<short>( "numericOption", "What?", 1 ) );
 }
 
-TEST_CASE( "GenericNumericArgument: Default constructor with explicit default, double" )
+TEST_CASE( "GenericArgument: Default constructor with explicit default, double" )
 {
-  ArgumentManager::getInstance( ).clear( );
-  CHECK_NOTHROW( GenericNumericArgument<double>( "numericOption", "What?", 1 ) );
+  ArgumentManager::clear( );
+  CHECK_NOTHROW( GenericArgument<double>( "numericOption", "What?", 1 ) );
 }
 
-TEST_CASE( "GenericNumericArgument: Default constructor with explicit default, float" )
+TEST_CASE( "GenericArgument: Default constructor with explicit default, float" )
 {
-  ArgumentManager::getInstance( ).clear( );
-  CHECK_NOTHROW( GenericNumericArgument<float>( "numericOption", "What?", 1 ) );
+  ArgumentManager::clear( );
+  CHECK_NOTHROW( GenericArgument<float>( "numericOption", "What?", 1 ) );
 }
 
-TEST_CASE( "GenericNumericArgument: Default constructor with explicit default, size_t" )
+TEST_CASE( "GenericArgument: Default constructor with explicit default, size_t" )
 {
-  ArgumentManager::getInstance( ).clear( );
-  CHECK_NOTHROW( GenericNumericArgument<size_t>( "numericOption", "What?", 1 ) );
+  ArgumentManager::clear( );
+  CHECK_NOTHROW( GenericArgument<size_t>( "numericOption", "What?", 1 ) );
 }
 
 #define UNUSED(expr) do { (void)(expr); } while (0)
 
 TEST_CASE( "Generic Argument" )
 {
-  ArgumentManager::getInstance( ).clear( );
+  ArgumentManager::clear( );
 
   SECTION( "conversion using non default int" ){
-  GenericNumericArgument<int> argument( "numericOption", "Yes or no?", 2 );
+  GenericArgument<int> argument( "numericOption", "Yes or no?", 2 );
 
   int result;
   CHECK_NOTHROW( result = argument );
@@ -79,7 +78,7 @@ TEST_CASE( "Generic Argument" )
 }
 
   SECTION( "conversion using non default float" ){
-  GenericNumericArgument<float> argument( "numericOption", "Yes or no?", 2 );
+  GenericArgument<float> argument( "numericOption", "Yes or no?", 2 );
 
   float result;
   CHECK_NOTHROW( result = argument );
@@ -93,7 +92,7 @@ TEST_CASE( "Generic Argument" )
 }
 
   SECTION( "conversion using non default double" ){
-  GenericNumericArgument<double> argument( "numericOption", "Yes or no?", 2 );
+  GenericArgument<double> argument( "numericOption", "Yes or no?", 2 );
 
   double result;
   CHECK_NOTHROW( result = argument );
@@ -107,7 +106,7 @@ TEST_CASE( "Generic Argument" )
 }
 
   SECTION( "conversion using non default size_t" ){
-  GenericNumericArgument<size_t> argument( "numericOption", "Yes or no?", 2 );
+  GenericArgument<size_t> argument( "numericOption", "Yes or no?", 2 );
 
   size_t result;
   CHECK_NOTHROW( result = argument );
@@ -121,3 +120,55 @@ TEST_CASE( "Generic Argument" )
 }
 
 }
+
+TEST_CASE( "Generic Argument as String" )
+{
+  ArgumentManager::clear( );
+  GenericArgument<std::string> argument( "stringOption", "Yes or no?", "No" );
+  std::string result;
+
+  SECTION( "Conversion" ){
+
+  CHECK_NOTHROW( result = argument );
+  CHECK( result == "No" );
+
+  CHECK_NOTHROW( result = argument.value() );
+  CHECK( result == "No" );
+
+  CHECK_NOTHROW( result = *argument );
+  CHECK( result == "No" );
+}
+
+}
+
+TEST_CASE( "Generic Argument as Boolean" )
+{
+  ArgumentManager::clear( );
+
+  GenericArgument<bool> argument( "boolOption", "Yes or no?", true );
+
+  bool result;
+
+  SECTION( "Implicit conversion" ){
+
+  CHECK_NOTHROW( result = argument );
+
+  CHECK( result == true );
+}
+
+  SECTION("conversion using value member"){
+
+  CHECK_NOTHROW( result = argument.value() );
+
+  CHECK( result == true );
+}
+
+  SECTION("conversion using dereferenciation"){
+
+  CHECK_NOTHROW( result = *argument );
+
+  CHECK( result == true );
+}
+
+}
+

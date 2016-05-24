@@ -7,9 +7,10 @@ A simple command line argument parser for programs written in C++.
 
 ## Features
 
++ single header library
 + addition of new command line arguments using a single line 
-+ automatic creating of documentation (help)
-+ automatic creating of input files for every run
++ automatic creation of documentation (help)
++ automatic creation of input files for every run
 + parsing of input files
 + support for customized arguments types, help messages and input file parsers
 
@@ -19,7 +20,7 @@ During my PhD I was running a lot of non-linear simulations using C++. This mean
 
 ## Setting up
 
-Currently you will have to compile the library and link it to your driver. The library can be build using CMake. I plan to add a (single) header only version in the future. That might not be the right answer for everyone (compile times <> template instantiations).
+Just get hold of the header file `autoargs.hpp` and include it whereever you need it.
 
 ## Usage
 
@@ -69,7 +70,7 @@ int main( int argc,
 ```
 To control the behaviour of this program via the command line the variables can be turned into `cpp-autoargs`' arguments.
 ```c++
-#include "../inc/autoargs.hpp"
+#include "autoargs.hpp"
 
 using namespace autoargs;
 

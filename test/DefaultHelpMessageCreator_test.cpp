@@ -20,7 +20,7 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // --- Internal Includes ---
-#include "../inc/DefaultHelpMessageCreator.hpp"
+#include "autoargs.hpp"
 
 // --- Catch Includes ---
 #include "catch.hpp"

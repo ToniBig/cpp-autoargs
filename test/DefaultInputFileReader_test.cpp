@@ -20,7 +20,7 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // --- Internal Includes ---
-#include "../inc/DefaultInputFileReader.hpp"
+#include "autoargs.hpp"
 
 // --- Catch Includes ---
 #include "catch.hpp"
@@ -43,7 +43,7 @@ TEST_CASE( "parse input file" )
   CHECK( result["stringArgument"] == "Hallo_Welt" );
   CHECK( result["sizeArgument"] == "34" );
   CHECK( result["bool1"] == "0" );
-  CHECK( result["bool2"] == "true" );
+  CHECK( detail::to_lower(result["bool2"]) == "true" );
 }
 
 }
