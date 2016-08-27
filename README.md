@@ -3,7 +3,9 @@
 A simple command line argument parser for programs written in C++.
 
 
-[![Build Status](https://travis-ci.org/ToniBig/cpp-autoargs.svg?branch=master)](https://travis-ci.org/ToniBig/cpp-autoargs) Travis CI
+[![Build Status](https://travis-ci.org/ToniBig/cpp-autoargs.svg?branch=master)](https://travis-ci.org/ToniBig/cpp-autoargs)
+[![Version](https://img.shields.io/badge/c%2B%2B-11-blue.svg)](http://en.cppreference.com/w/cpp)
+[![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://en.wikipedia.org/wiki/MIT_License)
 
 ## Features
 
