@@ -19,11 +19,10 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-// --- Internal Includes ---
-#include "autoargs.hpp"
-
-// --- Catch Includes ---
-#include "catch.hpp"
+#include <autoargs.hpp>
+#include <test/catch.hpp>
+#include <string>
+#include <vector>
 
 using namespace autoargs;
 

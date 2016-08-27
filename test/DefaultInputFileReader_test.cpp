@@ -20,13 +20,24 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // --- Internal Includes ---
-#include "autoargs.hpp"
-
-// --- Catch Includes ---
-#include "catch.hpp"
+#include <autoargs.hpp>
+#include <test/catch.hpp>
 
 using namespace autoargs;
 
+namespace {
+
+std::string to_lower( std::string const &str )
+{
+  std::string lower;
+  lower.resize( str.size( ) );
+
+  std::transform( str.begin( ), str.end( ), lower.begin( ), ::tolower );
+
+  return lower;
+}
+
+} // namespace
 
 TEST_CASE( "parse input file" )
 {
@@ -43,7 +54,7 @@ TEST_CASE( "parse input file" )
   CHECK( result["stringArgument"] == "Hallo_Welt" );
   CHECK( result["sizeArgument"] == "34" );
   CHECK( result["bool1"] == "0" );
-  CHECK( detail::to_lower(result["bool2"]) == "true" );
+  CHECK( to_lower(result["bool2"]) == "true" );
 }
 
 }

@@ -20,10 +20,8 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // --- Internal Includes ---
-#include "autoargs.hpp"
-
-// --- Catch Includes ---
-#include "catch.hpp"
+#include <autoargs.hpp>
+#include <test/catch.hpp>
 
 using namespace autoargs;
 

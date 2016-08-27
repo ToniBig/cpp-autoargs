@@ -20,12 +20,8 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // --- Internal Includes ---
-#include "autoargs.hpp"
-
-// --- Catch Includes ---
-#include "catch.hpp"
-
-// --- Standard Includes ---
+#include <autoargs.hpp>
+#include <test/catch.hpp>
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -49,21 +45,6 @@ TEST_CASE ( "Default callling what" )
   }
 
   CHECK( out.str( ) == "" );
-
-  std::cout.rdbuf( coutbuf ); //reset to standard output again
-}
-
-TEST_CASE ( "Default not callling what" )
-{
-  std::stringstream out;
-  std::streambuf *coutbuf = std::cout.rdbuf( ); //save old buf
-  std::cout.rdbuf( out.rdbuf( ) ); //redirect std::cout to out.txt!
-
-  {
-    AutoArgsException error( "You did something wrong" );
-  }
-
-  CHECK( out.str( ) == "Error: You did something wrong\n" );
 
   std::cout.rdbuf( coutbuf ); //reset to standard output again
 }

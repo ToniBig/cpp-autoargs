@@ -21,25 +21,40 @@
 
 CMAKE_MINIMUM_REQUIRED (VERSION 2.8)
 
-
 #------------------------------------------------------------------------------
 # NAME THE PROJECT -->	ROOT SOURCE: ${($PROJECT)_SOURCE_DIR} 
 #						ROOT BINARY: ${($PROJECT)_BINARY_DIR}
 #------------------------------------------------------------------------------
-PROJECT ( autoargs )
+PROJECT ( autoargs CXX )
 
 #------------------------------------------------------------------------------
 # SET OPTIONS
 #------------------------------------------------------------------------------
 OPTION ( AUTOARGS_ENABLE_TESTING "Enable tests for AutoArgs library" ON )
 OPTION ( AUTOARGS_ADD_CXX11_FLAG "Add -std=c++11 to CMAKE_CXX_FLAGS" ON )
+OPTION ( AUTOARGS_HEADER_ONLY "Use AutoArgs as header only library" ON )
 OPTION ( AUTOARGS_BUILD_EXAMPLES "Compile the accompanying examples" ON )
 
-IF( ${AUTOARGS_ADD_CXX11_FLAG} )
+IF ( ${AUTOARGS_ADD_CXX11_FLAG} )
   
   	SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11" )
 
-ENDIF( ${AUTOARGS_ADD_CXX11_FLAG} )
+ENDIF ( ${AUTOARGS_ADD_CXX11_FLAG} )
+
+IF ( ${AUTOARGS_HEADER_ONLY} )
+
+	ADD_DEFINITIONS( -DAUTOARGS_HEADER_ONLY )
+
+ELSE ( ${AUTOARGS_HEADER_ONLY} )
+
+
+	ADD_LIBRARY ( ${PROJECT_NAME} 
+				  SHARED
+			      source/autoargs.cpp
+				)
+	
+ENDIF ( ${AUTOARGS_HEADER_ONLY} )
+
 
 #------------------------------------------------------------------------------
 # INCLUDE DIRECTORY
@@ -59,6 +74,10 @@ IF ( ${AUTOARGS_ENABLE_TESTING} )
            DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
 
     ADD_EXECUTABLE ( ${PROJECT_NAME}_testrunner ${TESTSOURCES} )
+    
+	IF ( NOT ${AUTOARGS_HEADER_ONLY} )
+    	TARGET_LINK_LIBRARIES ( ${PROJECT_NAME}_testrunner ${PROJECT_NAME} )	
+	ENDIF ( NOT ${AUTOARGS_HEADER_ONLY} )
        
   	# build target to run tests contained in the runner
 	ADD_CUSTOM_TARGET ( 
@@ -82,5 +101,9 @@ IF ( ${AUTOARGS_BUILD_EXAMPLES} )
     ADD_EXECUTABLE ( hello1 examples/hello1.cpp)
     ADD_EXECUTABLE ( hello2 examples/hello2.cpp)
     ADD_EXECUTABLE ( hello3 examples/hello3.cpp)
+
+	IF ( NOT ${AUTOARGS_HEADER_ONLY} )
+    	TARGET_LINK_LIBRARIES ( hello3 ${PROJECT_NAME} )
+	ENDIF ( NOT ${AUTOARGS_HEADER_ONLY} )
 
 ENDIF ( ${AUTOARGS_BUILD_EXAMPLES} )

@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2013-2015 Tino Bog
+// Copyright (c) 2013-2016 Tino Bog
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
 // this software and associated documentation files (the "Software"), to deal in
@@ -19,25 +19,28 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-// --- Internal Includes ---
+#ifndef AUTOARGS_HEADER_ONLY
+#define AUTOARGS_USE_IMPLEMENTATION
+#define AUTOARGS_INLINE
 #include <autoargs.hpp>
 
-using namespace autoargs;
+namespace autoargs {
 
-int main( int argc,
-          char **argv )
-{
-  StringArg first { "first", "The first name", "John" };
-  StringArg last { "last", "The last name", "Doe" };
-  SizeArg age { "age", "The (true?) age", 33 };
-  DoubleArg height { "height", "How tall?", 1.92 };
-  BoolArg like { "like", "You like not-jokes?", true };
+template class GenericArgument<float> ;
+template class GenericArgument<double> ;
+template class GenericArgument<long double> ;
+template class GenericArgument<int> ;
+template class GenericArgument<unsigned int> ;
+template class GenericArgument<short> ;
+template class GenericArgument<unsigned short> ;
+template class GenericArgument<long> ;
+template class GenericArgument<unsigned long> ;
+template class GenericArgument<std::string> ;
+template class GenericArgument<bool> ;
 
-  ArgumentParser::parseCommandLine( argc, argv );
+template class GenericArgumentParser<DefaultHelpMessageCreator, ExceptionErrorPolicy, DefaultInputFileReader> ;
+template class GenericArgumentParser<DefaultHelpMessageCreator, CerrAndExitErrorPolicy, DefaultInputFileReader> ;
 
-  std::cout << "Hello World!" << std::endl;
-  std::cout << "My name is " << *first << " " << last.value( ) << "." << std::endl;
-  std::cout << "I am " << age << " years old." << std::endl;
-  std::cout << "I am " << height << " m tall." << std::endl;
-  std::cout << "I like telenovelas." << ( like ? "" : "..not!" ) << std::endl;
-}
+} // namespace autoargs
+
+#endif // AUTOARGS_HEADER_ONLY

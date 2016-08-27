@@ -7,8 +7,8 @@ A simple command line argument parser for programs written in C++.
 
 ## Features
 
-+ single header library
-+ addition of new command line arguments using a single line 
++ header only library
++ addition of new command line arguments using a single line of code
 + automatic creation of documentation (help)
 + automatic creation of input files for every run
 + parsing of input files
