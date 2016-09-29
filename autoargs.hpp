@@ -352,519 +352,518 @@ using TestArgumentParser = GenericArgumentParser<DefaultHelpMessageCreator, Exce
 #include <type_traits>
 #include <utility>
 
-namespace autoargs
+namespace autoargs {
+
+namespace detail {
+
+inline std::string to_string( std::string str )
 {
+  return std::move( str );
+}
 
-  namespace detail
+template<typename T>
+std::string to_string( T const &value )
+{
+  if ( std::is_floating_point<T>::value )
   {
+    std::stringstream stream;
+    stream << std::setprecision( 15 ) << std::scientific << value;
+    return stream.str( );
+  }
+  else
+  {
+    return std::to_string( value );
+  }
+}
 
-    inline std::string to_string( std::string str )
-    {
-      return std::move( str );
-    }
+inline std::string to_lower( std::string const &str )
+{
+  std::string lower;
+  lower.resize( str.size( ) );
 
-    template<typename T>
-    std::string to_string( T const &value )
+  std::transform( str.begin( ), str.end( ), lower.begin( ), ::tolower );
+
+  return lower;
+}
+
+template<typename T>
+struct lexical_cast_impl
+{
+  static T apply( std::string const &str )
+  {
+    T value;
+
+    std::istringstream inputStream;
+    inputStream.str( str );
+
+    inputStream >> value;
+
+    return value;
+  }
+};
+
+template<>
+struct lexical_cast_impl<bool>
+{
+  static bool apply( std::string const &str )
+  {
+    return ( str == "1" || to_lower( str ) == "true" );
+  }
+};
+
+template<typename T>
+T lexical_cast( std::string const &str )
+{
+  return lexical_cast_impl<T>::apply( str );
+}
+
+} // namespace detail
+
+AUTOARGS_INLINE AbsArgument::AbsArgument( const std::string& placeHolder,
+                                          const std::string& helpText ) :
+        myPlaceHolder( placeHolder ),
+        myHelpText( helpText )
+{
+}
+
+AUTOARGS_INLINE std::string AbsArgument::getPlaceHolder( ) const
+{
+  return myPlaceHolder;
+}
+
+AUTOARGS_INLINE std::string AbsArgument::getHelpText( ) const
+{
+  return myHelpText;
+}
+
+AUTOARGS_INLINE void ArgumentManager::clear( )
+{
+  ArgumentManager::getInstance( ).myArguments.clear( );
+}
+
+AUTOARGS_INLINE void ArgumentManager::registerArgument( AbsArgument& argument )
+{
+  ArgumentManager::getInstance( ).addDefaultArgument( &argument );
+}
+
+AUTOARGS_INLINE size_t ArgumentManager::getNumberOfArguments( )
+{
+  return ArgumentManager::getInstance( ).myArguments.size( );
+}
+
+AUTOARGS_INLINE void ArgumentManager::setArguments( StringVector argumentValues )
+{
+  for ( const auto & currentArgument : argumentValues )
+  {
+    detail::check( ArgumentManager::getInstance( ).isOptional( currentArgument ), "Argument is not optional: " + currentArgument );
+
+    size_t pos = currentArgument.find( '=' );
+
+    std::string placeHolder = currentArgument.substr( 2, pos - 2 );
+    std::string value = currentArgument.substr( pos + 1, currentArgument.size( ) );
+
+    detail::check( ArgumentManager::getInstance( ).myArguments.count( placeHolder ), "Argument not found: " + placeHolder );
+
+    ArgumentManager::getInstance( ).myArguments[placeHolder]->setValueAsString( value );
+
+  } // end of currentArgument-loop
+}
+
+AUTOARGS_INLINE void ArgumentManager::setArguments( PlaceHolderValueMap placeHoldersAndValues )
+{
+  for ( PlaceHolderValueMap::iterator iterator = placeHoldersAndValues.begin( ); iterator != placeHoldersAndValues.end( ); ++iterator )
+  {
+    auto placeHolder = iterator->first;
+    auto value = iterator->second;
+
+    // Look into optional arguments
+    for ( StringArgumentMap::iterator optionalIterator = ArgumentManager::getInstance( ).myArguments.begin( ); optionalIterator != ArgumentManager::getInstance( ).myArguments.end( );
+        ++optionalIterator )
     {
-      if ( std::is_floating_point<T>::value )
+      if ( optionalIterator->first == placeHolder )
       {
-        std::stringstream stream;
-        stream << std::setprecision( 15 ) << std::scientific << value;
-        return stream.str( );
+        optionalIterator->second->setValueAsString( value );
+        break;
       }
-      else
+    } // end of optionalIterator-loop
+
+  } // end of iterator-loop
+}
+
+AUTOARGS_INLINE DriverData ArgumentManager::getDriverData( )
+{
+  DriverData data;
+
+  for ( const auto& argument : ArgumentManager::getInstance( ).myArguments )
+  {
+    data.optionalArguments.push_back( makeArgument( argument.second->getPlaceHolder( ), argument.second->getHelpText( ), argument.second->getTypeAsString( ), argument.second->getValueAsString( ) ) );
+  } // end of argument-loop
+
+  return data;
+}
+
+AUTOARGS_INLINE ArgumentManager::ArgumentManager( )
+{
+}
+
+AUTOARGS_INLINE ArgumentManager& ArgumentManager::getInstance( )
+{
+  static ArgumentManager myInstance; // Meyers Singleton
+
+  return myInstance;
+}
+
+AUTOARGS_INLINE bool ArgumentManager::isOptional( std::string argument ) const
+{
+  bool hasDash = ( argument[0] == '-' && argument[1] == '-' );
+
+  size_t pos = argument.find( '=' );
+
+  bool hasAssignment = pos != std::string::npos;
+
+  return ( hasDash && hasAssignment );
+}
+
+AUTOARGS_INLINE void ArgumentManager::addDefaultArgument( AbsArgument* argument )
+{
+  detail::check( myArguments.count( argument->getPlaceHolder( ) ) == 0, "Optional Argument " + argument->getPlaceHolder( ) + " has already been defined!" );
+
+  myArguments[argument->getPlaceHolder( )] = argument;
+}
+
+AUTOARGS_INLINE AutoArgsException::AutoArgsException( const std::string& message ) :
+        myMessage( message )
+{
+}
+
+AUTOARGS_INLINE const char* AutoArgsException::what( ) const throw ( )
+{
+  return myMessage.c_str( );
+}
+
+AUTOARGS_INLINE std::string DefaultHelpMessageCreator::getHelpMessage( const DriverData& driverData )
+{
+  std::string description;
+
+  description += createUsageBlock( driverData );
+  description += createPurposeBlock( driverData );
+  description += createOptionalArgumentsBlock( driverData );
+  description += createBuiltInArgumentsBlock( driverData );
+
+  return description;
+}
+
+AUTOARGS_INLINE std::string DefaultHelpMessageCreator::createUsageBlock( const DriverData& driverData )
+{
+  std::string description;
+
+  description += "Usage: \n";
+
+  description += driverData.driverName + " ";
+
+  description += "[--options]\n";
+
+  description += driverData.driverName + " --input inputFileName\n";
+
+  return description;
+}
+
+AUTOARGS_INLINE std::string DefaultHelpMessageCreator::createPurposeBlock( const DriverData& driverData )
+{
+  std::string description;
+
+  if ( not driverData.description.empty( ) )
+  {
+    description += "\nPurpose: \n\n" + driverData.description + "\n";
+  }
+
+  return description;
+}
+
+AUTOARGS_INLINE std::string DefaultHelpMessageCreator::createOptionalArgumentsBlock( const DriverData& driverData )
+{
+  auto arguments = driverData.optionalArguments;
+  std::string argumentsType( "Optional arguments" );
+
+  return createArgumentsBlock( arguments, argumentsType, "--" );
+}
+
+AUTOARGS_INLINE std::string DefaultHelpMessageCreator::createBuiltInArgumentsBlock( const DriverData& driverData )
+{
+  auto arguments = driverData.builtInArguments;
+  std::string argumentsType( "Built-In arguments" );
+
+  return createArgumentsBlock( arguments, argumentsType, "--" );
+}
+
+AUTOARGS_INLINE std::string DefaultHelpMessageCreator::appendWhiteSpace( const std::string& input,
+                                                                         size_t finalWidth )
+{
+  std::string output = input;
+
+  size_t currentWidth = output.size( );
+
+  if ( currentWidth > finalWidth )
+  {
+    output += "\n\t" + std::string( finalWidth, ' ' );
+  }
+  else
+  {
+    size_t difference = finalWidth - currentWidth;
+
+    output += std::string( difference, ' ' );
+  }
+
+  return output;
+}
+
+AUTOARGS_INLINE std::string DefaultHelpMessageCreator::createArgumentsBlock( const std::vector<ArgumentData>& arguments,
+                                                                             const std::string& argumentsType,
+                                                                             const std::string& prefix )
+{
+  std::string description;
+  if ( arguments.empty( ) == false )
+  {
+    description += "\n" + argumentsType + ":\n";
+    for ( auto& argument : arguments )
+    {
+      description += "\n\t";
+      description += appendWhiteSpace( prefix + argument.placeHolder, placeHolderWidth );
+
+      if ( !argument.type.empty( ) )
       {
-        return std::to_string( value );
-      }
-    }
-
-    template<typename T>
-    struct lexical_cast_impl
-    {
-      static T lexical_cast( std::string const &str )
-      {
-        T value;
-
-        std::istringstream inputStream;
-        inputStream.str( str );
-
-        inputStream >> value;
-
-        return value;
-      }
-    };
-
-    inline std::string to_lower( std::string const &str )
-    {
-      std::string lower;
-      lower.resize( str.size( ) );
-
-      std::transform( str.begin( ), str.end( ), lower.begin( ), ::tolower );
-
-      return lower;
-    }
-
-    template<>
-    struct lexical_cast_impl<bool>
-    {
-      static bool lexical_cast( std::string const &str )
-      {
-        return ( str == "1" || to_lower( str ) == "true" );
-      }
-    };
-
-    template<typename T>
-    T lexical_cast( std::string const &str )
-    {
-      return lexical_cast_impl<T>::lexical_cast( str );
-    }
-
-  } // namespace detail
-
-  AUTOARGS_INLINE AbsArgument::AbsArgument( const std::string& placeHolder,
-      const std::string& helpText ) :
-  myPlaceHolder( placeHolder ),
-  myHelpText( helpText )
-  {
-  }
-
-  AUTOARGS_INLINE std::string AbsArgument::getPlaceHolder( ) const
-  {
-    return myPlaceHolder;
-  }
-
-  AUTOARGS_INLINE std::string AbsArgument::getHelpText( ) const
-  {
-    return myHelpText;
-  }
-
-  AUTOARGS_INLINE void ArgumentManager::clear( )
-  {
-    ArgumentManager::getInstance( ).myArguments.clear( );
-  }
-
-  AUTOARGS_INLINE void ArgumentManager::registerArgument( AbsArgument& argument )
-  {
-    ArgumentManager::getInstance( ).addDefaultArgument( &argument );
-  }
-
-  AUTOARGS_INLINE size_t ArgumentManager::getNumberOfArguments( )
-  {
-    return ArgumentManager::getInstance( ).myArguments.size( );
-  }
-
-  AUTOARGS_INLINE void ArgumentManager::setArguments( StringVector argumentValues )
-  {
-    for ( const auto & currentArgument : argumentValues )
-    {
-      detail::check( ArgumentManager::getInstance( ).isOptional( currentArgument ), "Argument is not optional: " + currentArgument );
-
-      size_t pos = currentArgument.find( '=' );
-
-      std::string placeHolder = currentArgument.substr( 2, pos - 2 );
-      std::string value = currentArgument.substr( pos + 1, currentArgument.size( ) );
-
-      detail::check( ArgumentManager::getInstance( ).myArguments.count( placeHolder ), "Argument not found: " + placeHolder );
-
-      ArgumentManager::getInstance( ).myArguments[placeHolder]->setValueAsString( value );
-
-    } // end of currentArgument-loop
-  }
-
-  AUTOARGS_INLINE void ArgumentManager::setArguments( PlaceHolderValueMap placeHoldersAndValues )
-  {
-    for ( PlaceHolderValueMap::iterator iterator = placeHoldersAndValues.begin( ); iterator != placeHoldersAndValues.end( ); ++iterator )
-    {
-      auto placeHolder = iterator->first;
-      auto value = iterator->second;
-
-      // Look into optional arguments
-      for ( StringArgumentMap::iterator optionalIterator = ArgumentManager::getInstance( ).myArguments.begin( ); optionalIterator != ArgumentManager::getInstance( ).myArguments.end( );
-          ++optionalIterator )
-      {
-        if ( optionalIterator->first == placeHolder )
-        {
-          optionalIterator->second->setValueAsString( value );
-          break;
-        }
-      } // end of optionalIterator-loop
-
-    } // end of iterator-loop
-  }
-
-  AUTOARGS_INLINE DriverData ArgumentManager::getDriverData( )
-  {
-    DriverData data;
-
-    for ( const auto& argument : ArgumentManager::getInstance( ).myArguments )
-    {
-      data.optionalArguments.push_back( makeArgument( argument.second->getPlaceHolder( ), argument.second->getHelpText( ), argument.second->getTypeAsString( ), argument.second->getValueAsString( ) ) );
-    } // end of argument-loop
-
-    return data;
-  }
-
-  AUTOARGS_INLINE ArgumentManager::ArgumentManager( )
-  {
-  }
-
-  AUTOARGS_INLINE ArgumentManager& ArgumentManager::getInstance( )
-  {
-    static ArgumentManager myInstance; // Meyers Singleton
-
-    return myInstance;
-  }
-
-  AUTOARGS_INLINE bool ArgumentManager::isOptional( std::string argument ) const
-  {
-    bool hasDash = ( argument[0] == '-' && argument[1] == '-' );
-
-    size_t pos = argument.find( '=' );
-
-    bool hasAssignment = pos != std::string::npos;
-
-    return ( hasDash && hasAssignment );
-  }
-
-  AUTOARGS_INLINE void ArgumentManager::addDefaultArgument( AbsArgument* argument )
-  {
-    detail::check( myArguments.count( argument->getPlaceHolder( ) ) == 0, "Optional Argument " + argument->getPlaceHolder( ) + " has already been defined!" );
-
-    myArguments[argument->getPlaceHolder( )] = argument;
-  }
-
-  AUTOARGS_INLINE AutoArgsException::AutoArgsException( const std::string& message ) :
-  myMessage( message )
-  {
-  }
-
-  AUTOARGS_INLINE const char* AutoArgsException::what( ) const throw ( )
-  {
-    return myMessage.c_str( );
-  }
-
-  AUTOARGS_INLINE std::string DefaultHelpMessageCreator::getHelpMessage( const DriverData& driverData )
-  {
-    std::string description;
-
-    description += createUsageBlock( driverData );
-    description += createPurposeBlock( driverData );
-    description += createOptionalArgumentsBlock( driverData );
-    description += createBuiltInArgumentsBlock( driverData );
-
-    return description;
-  }
-
-  AUTOARGS_INLINE std::string DefaultHelpMessageCreator::createUsageBlock( const DriverData& driverData )
-  {
-    std::string description;
-
-    description += "Usage: \n";
-
-    description += driverData.driverName + " ";
-
-    description += "[--options]\n";
-
-    description += driverData.driverName + " --input inputFileName\n";
-
-    return description;
-  }
-
-  AUTOARGS_INLINE std::string DefaultHelpMessageCreator::createPurposeBlock( const DriverData& driverData )
-  {
-    std::string description;
-
-    if ( not driverData.description.empty( ) )
-    {
-      description += "\nPurpose: \n\n" + driverData.description + "\n";
-    }
-
-    return description;
-  }
-
-  AUTOARGS_INLINE std::string DefaultHelpMessageCreator::createOptionalArgumentsBlock( const DriverData& driverData )
-  {
-    auto arguments = driverData.optionalArguments;
-    std::string argumentsType( "Optional arguments" );
-
-    return createArgumentsBlock( arguments, argumentsType, "--" );
-  }
-
-  AUTOARGS_INLINE std::string DefaultHelpMessageCreator::createBuiltInArgumentsBlock( const DriverData& driverData )
-  {
-    auto arguments = driverData.builtInArguments;
-    std::string argumentsType( "Built-In arguments" );
-
-    return createArgumentsBlock( arguments, argumentsType, "--" );
-  }
-
-  AUTOARGS_INLINE std::string DefaultHelpMessageCreator::appendWhiteSpace( const std::string& input,
-      size_t finalWidth )
-  {
-    std::string output = input;
-
-    size_t currentWidth = output.size( );
-
-    if ( currentWidth > finalWidth )
-    {
-      output += "\n\t" + std::string( finalWidth, ' ' );
-    }
-    else
-    {
-      size_t difference = finalWidth - currentWidth;
-
-      output += std::string( difference, ' ' );
-    }
-
-    return output;
-  }
-
-  AUTOARGS_INLINE std::string DefaultHelpMessageCreator::createArgumentsBlock( const std::vector<ArgumentData>& arguments,
-      const std::string& argumentsType,
-      const std::string& prefix )
-  {
-    std::string description;
-    if ( arguments.empty( ) == false )
-    {
-      description += "\n" + argumentsType + ":\n";
-      for ( auto& argument : arguments )
-      {
-        description += "\n\t";
-        description += appendWhiteSpace( prefix + argument.placeHolder, placeHolderWidth );
-
-        if ( !argument.type.empty( ) )
-        {
-          description += " : ";
-
-          if ( argument.defaultValue.empty( ) )
-          {
-            description += appendWhiteSpace( argument.type, typeValueWidth );
-          }
-          else
-          {
-            description += appendWhiteSpace( argument.type + " (" + argument.defaultValue + ")", typeValueWidth );
-          }
-        }
-
         description += " : ";
-        description += argument.helpText;
-      }
-      description += "\n";
-    }
 
-    return description;
-  }
-
-  AUTOARGS_INLINE PlaceHolderValueMap DefaultInputFileReader::parseInputFile( const std::string& inputFile )
-  {
-    PlaceHolderValueMap result;
-
-    // open input file
-    std::ifstream infile;
-    infile.open( inputFile.c_str( ) );
-
-    detail::check( infile.is_open( ), "Couldn't open file: " + inputFile );
-
-    size_t lineCounter = 0;
-
-    // parse arguments
-    for ( std::string line; std::getline( infile, line ); )
-    {
-      size_t pos = line.find( "#" );
-
-      if ( pos != 0 ) // Is no comment line
-      {
-        removeInlineComment( line, pos );
-
-        std::string placeHolder, value;
-        std::tie( placeHolder, value ) = tokenizeLine( line, lineCounter );
-
-        detail::check( not result.count( placeHolder ), "Placeholder in line " + std::to_string( lineCounter ) + " is not unique" );
-
-        // Insert result
-        result[placeHolder] = value;
+        if ( argument.defaultValue.empty( ) )
+        {
+          description += appendWhiteSpace( argument.type, typeValueWidth );
+        }
+        else
+        {
+          description += appendWhiteSpace( argument.type + " (" + argument.defaultValue + ")", typeValueWidth );
+        }
       }
 
-      lineCounter++;
+      description += " : ";
+      description += argument.helpText;
+    }
+    description += "\n";
+  }
+
+  return description;
+}
+
+AUTOARGS_INLINE PlaceHolderValueMap DefaultInputFileReader::parseInputFile( const std::string& inputFile )
+{
+  PlaceHolderValueMap result;
+
+  // open input file
+  std::ifstream infile;
+  infile.open( inputFile.c_str( ) );
+
+  detail::check( infile.is_open( ), "Couldn't open file: " + inputFile );
+
+  size_t lineCounter = 0;
+
+  // parse arguments
+  for ( std::string line; std::getline( infile, line ); )
+  {
+    size_t pos = line.find( "#" );
+
+    if ( pos != 0 ) // Is no comment line
+    {
+      removeInlineComment( line, pos );
+
+      std::string placeHolder, value;
+      std::tie( placeHolder, value ) = tokenizeLine( line, lineCounter );
+
+      detail::check( not result.count( placeHolder ), "Placeholder in line " + std::to_string( lineCounter ) + " is not unique" );
+
+      // Insert result
+      result[placeHolder] = value;
     }
 
-    return result;
+    lineCounter++;
   }
 
-  AUTOARGS_INLINE void DefaultInputFileReader::removeInlineComment( std::string &line,
-      size_t pos )
+  return result;
+}
+
+AUTOARGS_INLINE void DefaultInputFileReader::removeInlineComment( std::string &line,
+                                                                  size_t pos )
+{
+  if ( pos != std::string::npos ) // Has a comment somewhere
   {
-    if ( pos != std::string::npos ) // Has a comment somewhere
+    line = line.substr( 0, pos );
+  }
+}
+
+AUTOARGS_INLINE StringPair DefaultInputFileReader::tokenizeLine( std::string const &line,
+                                                                 size_t counter )
+{
+  auto pos = line.find( ":" );
+
+  detail::check( pos, "No delimiter found on line " + std::to_string( counter ) );
+
+  std::istringstream placeHolderStream( line.substr( 0, pos ) );
+  std::istringstream valueStream( line.substr( pos + 1, line.size( ) ) );
+  std::string placeHolder, value;
+
+  // Strip leading and trailing whitespace
+  placeHolderStream >> placeHolder;
+  valueStream >> value;
+
+  return std::make_pair( placeHolder, value );
+}
+
+template<typename T>
+GenericArgument<T>::GenericArgument( std::string const &placeHolder,
+                                     std::string const &helpText,
+                                     T defaulValue ) :
+        AbsArgument( placeHolder, helpText ),
+        value_( defaulValue )
+{
+  ArgumentManager::registerArgument( *this );
+}
+
+template<typename T>
+std::string GenericArgument<T>::getValueAsString( ) const
+{
+  return detail::to_string( value_ );
+}
+
+template<typename T>
+void GenericArgument<T>::setValueAsString( std::string value )
+{
+  value_ = detail::lexical_cast<T>( value );
+}
+
+template<typename T>
+GenericArgument<T>::operator T( ) const
+{
+  return value_;
+}
+
+template<typename T>
+T GenericArgument<T>::value( ) const
+{
+  return value_;
+}
+
+template<typename T> T GenericArgument<T>::operator*( ) const
+{
+  return value_;
+}
+
+template<typename HelpMessagePolicy, typename ErrorPolicy, typename InputFilePolicy>
+AUTOARGS_INLINE void GenericArgumentParser<HelpMessagePolicy, ErrorPolicy, InputFilePolicy>::parseCommandLine( int argc,
+                                                                                                               char** argv )
+{
+  auto createStringVector = [](size_t lowerBound, size_t upperBound, char** argv)
+  {
+    StringVector argumentValues;
+
+    for ( size_t i = lowerBound; i < upperBound; ++i )
     {
-      line = line.substr( 0, pos );
-    }
-  }
-
-  AUTOARGS_INLINE StringPair DefaultInputFileReader::tokenizeLine( std::string const &line,
-      size_t counter )
-  {
-    auto pos = line.find( ":" );
-
-    detail::check( pos, "No delimeter found on line " + std::to_string( counter ) );
-
-    std::istringstream placeHolderStream( line.substr( 0, pos ) );
-    std::istringstream valueStream( line.substr( pos + 1, line.size( ) ) );
-    std::string placeHolder, value;
-
-    // Strip leading and trailing whitespace
-    placeHolderStream >> placeHolder;
-    valueStream >> value;
-
-    return std::make_pair( placeHolder, value );
-  }
-
-  template<typename T>
-  GenericArgument<T>::GenericArgument( std::string const &placeHolder,
-      std::string const &helpText,
-      T defaulValue ) :
-  AbsArgument( placeHolder, helpText ),
-  value_( defaulValue )
-  {
-    ArgumentManager::registerArgument( *this );
-  }
-
-  template<typename T>
-  std::string GenericArgument<T>::getValueAsString( ) const
-  {
-    return detail::to_string( value_ );
-  }
-
-  template<typename T>
-  void GenericArgument<T>::setValueAsString( std::string value )
-  {
-    value_ = detail::lexical_cast<T>( value );
-  }
-
-  template<typename T>
-  GenericArgument<T>::operator T( ) const
-  {
-    return value_;
-  }
-
-  template<typename T>
-  T GenericArgument<T>::value( ) const
-  {
-    return value_;
-  }
-
-  template<typename T> T GenericArgument<T>::operator*( ) const
-  {
-    return value_;
-  }
-
-  template<typename HelpMessagePolicy, typename ErrorPolicy, typename InputFilePolicy>
-  AUTOARGS_INLINE void GenericArgumentParser<HelpMessagePolicy, ErrorPolicy, InputFilePolicy>::parseCommandLine( int argc,
-      char** argv )
-  {
-    auto createStringVector = [](size_t lowerBound, size_t upperBound, char** argv)
-    {
-      StringVector argumentValues;
-
-      for ( size_t i = lowerBound; i < upperBound; ++i )
-      {
-        argumentValues.push_back( argv[i] );
-      } // end of i-loop
+      argumentValues.push_back( argv[i] );
+    } // end of i-loop
 
       return argumentValues;
     };
 
-    std::string driverName = argv[0];
-    size_t numberOfProvidedArguments = argc - 1;
+  std::string driverName = argv[0];
+  size_t numberOfProvidedArguments = argc - 1;
 
-    if ( numberOfProvidedArguments == 1 )
+  if ( numberOfProvidedArguments == 1 )
+  {
+    // Built in options
     {
-      // Built in options
+      // - Provided -help -> print help message!
+      if ( std::string( argv[1] ) == "--help" )
       {
-        // - Provided -help -> print help message!
-        if ( std::string( argv[1] ) == "--help" )
-        {
-          DriverData driverData = ArgumentManager::getDriverData( );
-          driverData.driverName = driverName;
-          driverData.description = description;
-          driverData.builtInArguments.push_back( makeArgument( "help", "print this help message" ) );
-          driverData.builtInArguments.push_back( makeArgument( "input", "Process an input file" ) );
+        DriverData driverData = ArgumentManager::getDriverData( );
+        driverData.driverName = driverName;
+        driverData.description = description;
+        driverData.builtInArguments.push_back( makeArgument( "help", "print this help message" ) );
+        driverData.builtInArguments.push_back( makeArgument( "input", "Process an input file" ) );
 
-          std::cout << HelpMessagePolicy::getHelpMessage( driverData ) << std::endl;
-          exit( EXIT_SUCCESS );
-        }
-
+        std::cout << HelpMessagePolicy::getHelpMessage( driverData ) << std::endl;
+        exit( EXIT_SUCCESS );
       }
 
-      ArgumentManager::setArguments(
-          { std::string( argv[1] )});
     }
-    //- More than one argument given
-    else
+
+    ArgumentManager::setArguments( { std::string( argv[1] ) } );
+  }
+  // More than one argument given
+  else
+  {
+    // Check if input file has been provided
+    if ( ( numberOfProvidedArguments == 2 ) && ( std::string( argv[1] ) == "--input" ) )
     {
-      // Check if input file has been provided
-      if ( ( numberOfProvidedArguments == 2 ) && ( std::string( argv[1] ) == "--input" ) )
-      {
-        PlaceHolderValueMap input = InputFilePolicy::parseInputFile( std::string( argv[2] ) );
-        ArgumentManager::setArguments( input );
+      PlaceHolderValueMap input = InputFilePolicy::parseInputFile( std::string( argv[2] ) );
+      ArgumentManager::setArguments( input );
 
-        return;
-      }
-
-      StringVector optionalArgumentValues = createStringVector( 1, numberOfProvidedArguments + 1, argv );
-
-      ArgumentManager::setArguments( optionalArgumentValues );
+      return;
     }
 
-    // Create Input file
-    createInputFile( driverName );
+    StringVector optionalArgumentValues = createStringVector( 1, numberOfProvidedArguments + 1, argv );
+
+    ArgumentManager::setArguments( optionalArgumentValues );
   }
 
-  template<typename HelpMessagePolicy, typename ErrorPolicy, typename InputFilePolicy>
-  AUTOARGS_INLINE void GenericArgumentParser<HelpMessagePolicy, ErrorPolicy, InputFilePolicy>::setDriverDescription( const std::string& driverDescription )
+  // Create Input file
+  createInputFile( driverName );
+}
+
+template<typename HelpMessagePolicy, typename ErrorPolicy, typename InputFilePolicy>
+AUTOARGS_INLINE void GenericArgumentParser<HelpMessagePolicy, ErrorPolicy, InputFilePolicy>::setDriverDescription( const std::string& driverDescription )
+{
+  GenericArgumentParser<HelpMessagePolicy, ErrorPolicy, InputFilePolicy>::description = driverDescription;
+}
+
+template<typename HelpMessagePolicy, typename ErrorPolicy, typename InputFilePolicy>
+AUTOARGS_INLINE void GenericArgumentParser<HelpMessagePolicy, ErrorPolicy, InputFilePolicy>::createInputFile( const std::string& driverName )
+{
+  std::string fileName = ".input.in";
+
+  std::ofstream inputFile( fileName );
+
+  if ( inputFile.is_open( ) )
   {
-    GenericArgumentParser<HelpMessagePolicy, ErrorPolicy, InputFilePolicy>::description = driverDescription;
+    inputFile << "# Input file for driver: " << driverName << "\n";
+    inputFile << "# " << "\n";
+    inputFile << listArguments( );
   }
+}
 
-  template<typename HelpMessagePolicy, typename ErrorPolicy, typename InputFilePolicy>
-  AUTOARGS_INLINE void GenericArgumentParser<HelpMessagePolicy, ErrorPolicy, InputFilePolicy>::createInputFile( const std::string& driverName )
+template<typename HelpMessagePolicy, typename ErrorPolicy, typename InputFilePolicy>
+void GenericArgumentParser<HelpMessagePolicy, ErrorPolicy, InputFilePolicy>::processArguments( const std::vector<ArgumentData>& arguments,
+                                                                                               std::ostringstream& listOfArguments )
+{
+  for ( auto& argument : arguments )
   {
-    std::string fileName = ".input.in";
-
-    std::ofstream inputFile( fileName );
-
-    if ( inputFile.is_open( ) )
-    {
-      inputFile << "# Input file for driver: " << driverName << "\n";
-      inputFile << "# " << "\n";
-      inputFile << listArguments( );
-    }
+    listOfArguments << std::setw( 30 ) << std::right << argument.placeHolder;
+    listOfArguments << " : ";
+    listOfArguments << std::setw( 30 ) << std::left << argument.defaultValue;
+    listOfArguments << " # (" << argument.type << ") " << argument.helpText << "\n";
   }
+}
 
-  template<typename HelpMessagePolicy, typename ErrorPolicy, typename InputFilePolicy>
-  void GenericArgumentParser<HelpMessagePolicy, ErrorPolicy, InputFilePolicy>::processArguments( const std::vector<ArgumentData>& arguments,
-      std::ostringstream& listOfArguments )
-  {
-    for ( auto& argument : arguments )
-    {
-      listOfArguments << std::setw( 30 ) << std::right << argument.placeHolder << " : " << std::setw( 30 ) << std::left << argument.defaultValue << " # (" << argument.type << ") " << argument.helpText
-      << "\n";
-    }
-  }
+template<typename HelpMessagePolicy, typename ErrorPolicy, typename InputFilePolicy>
+AUTOARGS_INLINE std::string GenericArgumentParser<HelpMessagePolicy, ErrorPolicy, InputFilePolicy>::listArguments( )
+{
+  DriverData data = ArgumentManager::getDriverData( );
 
-  template<typename HelpMessagePolicy, typename ErrorPolicy, typename InputFilePolicy>
-  AUTOARGS_INLINE std::string GenericArgumentParser<HelpMessagePolicy, ErrorPolicy, InputFilePolicy>::listArguments( )
-  {
-    DriverData data = ArgumentManager::getDriverData( );
+  std::ostringstream listOfArguments;
 
-    std::ostringstream listOfArguments;
+  processArguments( data.optionalArguments, listOfArguments );
 
-    processArguments( data.optionalArguments, listOfArguments );
+  return listOfArguments.str( );
+}
 
-    return listOfArguments.str( );
-  }
-
-  template<typename HelpMessagePolicy, typename ErrorPolicy, typename InputFilePolicy>
-  std::string GenericArgumentParser<HelpMessagePolicy, ErrorPolicy, InputFilePolicy>::description = "";
+template<typename HelpMessagePolicy, typename ErrorPolicy, typename InputFilePolicy>
+std::string GenericArgumentParser<HelpMessagePolicy, ErrorPolicy, InputFilePolicy>::description = "";
 
 } // namespace autoargs
 
